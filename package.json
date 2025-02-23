@@ -1,0 +1,46 @@
+{
+  "name": "nextjs-wordpress",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "clean": "rimraf .next && rimraf gql",
+    "format": "prettier '**/*.{js,jsx,ts,tsx,md,html,css,json,yml}' --ignore-path .gitignore --cache --write",
+    "info": "next info",
+    "lint": "next lint",
+    "start": "next start",
+    "codegen": "graphql-codegen --config codegen.ts && node add-ts-nocheck.js",
+    "build": "npm run codegen && next build",
+    "dev": "npm run clean && npm run codegen && next dev --turbopack"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.13.1",
+    "@apollo/experimental-nextjs-app-support": "^0.11.9",
+    "graphql": "^16.10.0",
+    "lucide-react": "^0.475.0",
+    "next": "15.1.7",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "sharp": "^0.33.5",
+    "xml-escape": "^1.1.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@graphql-codegen/cli": "^5.0.5",
+    "@graphql-codegen/client-preset": "^4.6.3",
+    "@graphql-codegen/schema-ast": "^4.1.0",
+    "@tailwindcss/postcss": "^4.0.8",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/xml-escape": "^1.1.3",
+    "eslint": "^9",
+    "eslint-config-next": "15.1.7",
+    "eslint-config-prettier": "^10.0.1",
+    "postcss": "^8.5.3",
+    "prettier": "^3.5.2",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "rimraf": "^6.0.1",
+    "tailwindcss": "^4.0.8",
+    "typescript": "^5.7.3"
+  }
+}
