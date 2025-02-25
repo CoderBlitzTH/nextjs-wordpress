@@ -1,9 +1,8 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { BlogList } from '@/components/ui/blog';
-import type { GetPostsByCategoryQuery } from '@/graphql/generated/graphql';
-import { GetPostsByCategoryDocument } from '@/graphql/generated/graphql';
+import { GetPostsByTagDocument } from '@/graphql/generated/graphql';
 import { query } from '@/lib/apolloClient';
 import config from '@/lib/config';
 import type { PageProps } from '@/types';
@@ -17,45 +16,45 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const { data } = await query<GetPostsByCategoryQuery>({
-    query: GetPostsByCategoryDocument,
+  const { data } = await query({
+    query: GetPostsByTagDocument,
     variables: { first: 10, slug },
   });
 
-  const { category } = data;
+  const { tag } = data;
 
-  if (!category || !category?.posts?.nodes) {
+  if (!tag || !tag?.posts?.nodes) {
     return {};
   }
 
   return {
-    title: `${category.name} - ${config.siteName}`,
-    description: `คลังเก็บหมวดหมู่สำหรับ ${category.name}`,
+    title: `${tag.name} - ${config.siteName}`,
+    description: `เก็บแท็กสำหรับ ${tag.name}`,
   };
 }
 
 /**
- * The archive page route.
+ * The tag archive route.
  *
  * @see https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts#pages
  */
 export default async function Page({ params }: Readonly<PageProps>) {
   const { slug } = await params;
   const { data } = await query({
-    query: GetPostsByCategoryDocument,
+    query: GetPostsByTagDocument,
     variables: { first: 10, slug },
   });
 
-  const { category } = data;
+  const { tag } = data;
 
-  if (!category || !category?.posts?.nodes) {
+  if (!tag || !tag?.posts?.nodes) {
     notFound();
   }
 
   return (
     <>
-      <h1 className="mb-4 text-3xl font-bold">{category.name}</h1>
-      <BlogList posts={category.posts.nodes} />
+      <h1 className="mb-4 text-3xl font-bold">{tag.name}</h1>
+      <BlogList posts={tag.posts.nodes} />
     </>
   );
 }
