@@ -1,0 +1,44 @@
+query GetPostPreview($id: ID!) {
+  post(id: $id, idType: DATABASE_ID, asPreview: true) {
+    databaseId
+    title
+    content(format: RENDERED)
+    excerpt(format: RENDERED)
+    date
+    featuredImage {
+      node {
+        sourceUrl
+        mediaDetails {
+          width
+          height
+          sizes {
+            sourceUrl
+            height
+            width
+            name
+          }
+        }
+      }
+    }
+    author {
+      node {
+        name
+        avatar {
+          url
+        }
+      }
+    }
+    categories {
+      nodes {
+        name
+        slug
+      }
+    }
+    tags {
+      nodes {
+        name
+        slug
+      }
+    }
+  }
+}

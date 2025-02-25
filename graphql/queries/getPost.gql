@@ -1,0 +1,64 @@
+query GetPost($slug: ID!) {
+  post(id: $slug, idType: SLUG) {
+    databaseId
+    title
+    link
+    content(format: RENDERED)
+    excerpt(format: RENDERED)
+    date
+    commentCount
+    featuredImage {
+      node {
+        sourceUrl
+        mediaDetails {
+          width
+          height
+          sizes {
+            sourceUrl
+            height
+            width
+            name
+          }
+        }
+      }
+    }
+    author {
+      node {
+        name
+        avatar {
+          url
+        }
+      }
+    }
+    categories(where: { orderby: COUNT }) {
+      nodes {
+        name
+        slug
+      }
+    }
+    tags {
+      nodes {
+        name
+        slug
+      }
+    }
+    comments(first: 30, where: { statusIn: APPROVE, order: ASC }) {
+      nodes {
+        date
+        databaseId
+        status
+        content(format: RENDERED)
+        author {
+          node {
+            name
+            url
+            email
+            avatar {
+              url
+            }
+          }
+        }
+      }
+    }
+  }
+}

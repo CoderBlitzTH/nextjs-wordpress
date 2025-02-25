@@ -1,9 +1,10 @@
-import BlogList from '@/components/blog/BlogList';
-import type { GetPageQuery, GetPostsQuery } from '@/gql/graphql';
-import { GET_PAGE_BY_SLUG, GET_POSTS } from '@/graphql/queries';
-import { apolloClient } from '@/lib/apolloClient';
-import type { PageProps } from '@/types/page';
 import { notFound } from 'next/navigation';
+
+import { BlogList } from '@/components/ui/blog';
+import type { GetPageQuery, GetPostsQuery } from '@/graphql/generated/graphql';
+import { GetPageDocument, GetPostsDocument } from '@/graphql/generated/graphql';
+import { query } from '@/lib/apolloClient';
+import type { PageProps } from '@/types/page';
 
 /**
  * Represents the possible return types from the fetchData function using discriminated union
@@ -25,11 +26,9 @@ type FetchDataResult =
  * @returns A promise containing either posts, a single post, or an error
  */
 const fetchData = async (slug: string): Promise<FetchDataResult> => {
-  const { query } = apolloClient();
-
   if (slug === 'blog') {
-    const { data } = await query<GetPostsQuery>({
-      query: GET_POSTS,
+    const { data } = await query({
+      query: GetPostsDocument,
       variables: { first: 10 },
     });
 
@@ -44,8 +43,8 @@ const fetchData = async (slug: string): Promise<FetchDataResult> => {
     };
   }
 
-  const { data } = await query<GetPageQuery>({
-    query: GET_PAGE_BY_SLUG,
+  const { data } = await query({
+    query: GetPageDocument,
     variables: { slug },
   });
 
@@ -68,28 +67,10 @@ type RenderPageProps = {
 
 function RenderPage({ page }: RenderPageProps) {
   return (
-    <main className="flex flex-col gap-8">
-      <article>
-        <h1 dangerouslySetInnerHTML={{ __html: page?.title ?? '' }} />
-        <div dangerouslySetInnerHTML={{ __html: page?.content ?? '' }} />
-      </article>
-    </main>
-  );
-}
-
-/**
- * Props for the RenderPostsList component
- */
-type RenderPostsListProps = {
-  posts: NonNullable<NonNullable<GetPostsQuery['posts']>['nodes']>;
-  context: string;
-};
-
-function RenderPostsList({ posts, context }: RenderPostsListProps) {
-  return (
-    <main className="mx-auto max-w-3xl px-4 pt-24 pb-16">
-      <BlogList posts={posts} />
-    </main>
+    <article>
+      <h1 dangerouslySetInnerHTML={{ __html: page?.title ?? '' }} />
+      <div dangerouslySetInnerHTML={{ __html: page?.content ?? '' }} />
+    </article>
   );
 }
 
@@ -110,7 +91,12 @@ export default async function Page({ params }: Readonly<PageProps>) {
   }
 
   if (data.type === 'posts' && data.posts.length > 0) {
-    return <RenderPostsList posts={data.posts} context={data.context} />;
+    return (
+      <>
+        <h1 className="mb-4 text-3xl font-bold">บทความล่าสุด</h1>
+        <BlogList posts={data.posts} />
+      </>
+    );
   }
 
   notFound();

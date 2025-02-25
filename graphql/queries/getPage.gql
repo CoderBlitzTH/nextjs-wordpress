@@ -1,0 +1,23 @@
+query GetPage($slug: ID = "URI") {
+  page(id: $slug, idType: URI) {
+    databaseId
+    date
+    title(format: RENDERED)
+    content(format: RENDERED)
+    featuredImage {
+      node {
+        sourceUrl
+        mediaDetails {
+          width
+          height
+          sizes {
+            sourceUrl
+            height
+            width
+            name
+          }
+        }
+      }
+    }
+  }
+}

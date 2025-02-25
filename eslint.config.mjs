@@ -22,6 +22,7 @@ const config = [
       '**/coverage/',
       '**/node_modules/',
       '**/public/',
+      '**/graphql/generated/',
     ],
   },
   ...compat.extends('next/core-web-vitals', 'prettier'),

@@ -1,27 +1,19 @@
-import type { GetPostsQuery } from '@/gql/graphql';
-import { GET_POSTS } from '@/graphql/queries';
-import { apolloClient } from '@/lib/apolloClient';
-import Link from 'next/link';
+import { BlogList } from '@/components/ui/blog';
+import { GetPostsDocument } from '@/graphql/generated/graphql';
+import { query } from '@/lib/apolloClient';
 
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const { query } = apolloClient();
-  const { data } = await query<GetPostsQuery>({
-    query: GET_POSTS,
+  const { data } = await query({
+    query: GetPostsDocument,
     variables: { first: 10 },
   });
 
   return (
-    <main>
-      <h1>Recent Posts</h1>
-      <ul>
-        {(data?.posts?.nodes ?? []).map(post => (
-          <li key={post.databaseId}>
-            <Link href={post?.link ?? '#'}>{post.title}</Link>
-          </li>
-        ))}
-      </ul>
-    </main>
+    <>
+      <h1 className="mb-4 text-3xl font-bold">บทความล่าสุด</h1>
+      {data?.posts?.nodes && <BlogList posts={data?.posts?.nodes} />}
+    </>
   );
 }

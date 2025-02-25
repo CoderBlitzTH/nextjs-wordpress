@@ -1,0 +1,33 @@
+query GetPosts($first: Int!) {
+  posts(first: $first, where: { status: PUBLISH }) {
+    nodes {
+      databaseId
+      title
+      link
+      date
+      excerpt(format: RENDERED)
+      commentCount
+      featuredImage {
+        node {
+          sourceUrl
+          mediaDetails {
+            width
+            height
+            sizes {
+              sourceUrl
+              height
+              width
+              name
+            }
+          }
+        }
+      }
+      categories(where: { orderby: COUNT }) {
+        nodes {
+          name
+          slug
+        }
+      }
+    }
+  }
+}

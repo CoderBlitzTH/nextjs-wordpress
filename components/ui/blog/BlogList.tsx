@@ -1,4 +1,4 @@
-import { GetPostsQuery } from '@/gql/graphql';
+import type { GetPostsQuery } from '@/graphql/generated/graphql';
 import BlogCard from './BlogCard';
 
 type BlogListProps = {

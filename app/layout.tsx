@@ -1,9 +1,10 @@
-import config from '@/lib/config';
 import type { Metadata } from 'next';
-import ApolloProvider from './ApolloProvider';
 
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
+import ApolloProvider from '@/components/providers/ApolloProvider';
+import ThemeProvider from '@/components/providers/ThemeProvider';
+import config from '@/lib/config';
 import './globals.css';
 
 /**
@@ -26,16 +27,24 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="th">
-      <body>
-        <ApolloProvider>
-          <Header />
-          <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-            {children}
-          </div>
-          <Footer />
-        </ApolloProvider>
-      </body>
-    </html>
+    <ApolloProvider>
+      <html lang="th" suppressHydrationWarning>
+        <body className="min-h-screen bg-gray-50 dark:bg-gray-900">
+          <ThemeProvider
+            attribute="data-theme"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+            scriptProps={{ 'data-cfasync': false }}
+          >
+            <Header />
+            <main className="mx-auto max-w-3xl px-4 pt-24 pb-16">
+              {children}
+            </main>
+            <Footer />
+          </ThemeProvider>
+        </body>
+      </html>
+    </ApolloProvider>
   );
 }

@@ -4,27 +4,22 @@ import { loadEnvConfig } from '@next/env';
 const projectDir = process.cwd();
 loadEnvConfig(projectDir);
 
+const schemaUrl = process.env.NEXT_PUBLIC_WORDPRESS_GRAPHQL_URL;
+if (!schemaUrl) {
+  throw new Error('NEXT_PUBLIC_WORDPRESS_GRAPHQL_URL is not defined in .env');
+}
+
 const config: CodegenConfig = {
-  overwrite: true,
-  schema: {
-    [process.env.NEXT_PUBLIC_WORDPRESS_GRAPHQL_URL as string]: {
-      headers: {
-        'User-Agent': 'Codegen',
-        // Authorization: 'Bearer your-token',
-      },
-    },
-  },
-  documents: ['graphql/**/*.ts'],
+  schema: schemaUrl,
+  documents: 'graphql/**/*.gql',
   generates: {
-    'gql/': {
+    'graphql/generated/': {
       preset: 'client',
-      plugins: [],
       presetConfig: {
+        fragmentMasking: false,
         gqlTagName: 'gql',
       },
-    },
-    'gql/schema.gql': {
-      plugins: ['schema-ast'],
+      plugins: [],
     },
   },
 };
