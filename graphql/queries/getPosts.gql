@@ -4,6 +4,7 @@ query GetPosts($first: Int!) {
       databaseId
       title
       link
+      slug
       date
       excerpt(format: RENDERED)
       commentCount

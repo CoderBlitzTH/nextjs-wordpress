@@ -2,6 +2,7 @@ query GetPage($slug: ID = "URI") {
   page(id: $slug, idType: URI) {
     databaseId
     date
+    slug
     title(format: RENDERED)
     content(format: RENDERED)
     featuredImage {

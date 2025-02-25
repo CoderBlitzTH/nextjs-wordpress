@@ -3,6 +3,7 @@ query GetPost($slug: ID!) {
     databaseId
     title
     link
+    slug
     content(format: RENDERED)
     excerpt(format: RENDERED)
     date
