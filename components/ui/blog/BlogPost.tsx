@@ -3,6 +3,7 @@ import Image from 'next/image';
 import type { GetPostQuery } from '@/graphql/generated/graphql';
 import { getImageSizes } from '@/lib/utils';
 import type { ImgSize } from '@/types';
+import BlogContent from './BlogContent';
 
 type BlogPostProps = {
   post: NonNullable<GetPostQuery['post']>;
@@ -58,10 +59,7 @@ export default function BlogPost({ post }: BlogPostProps) {
         )}
       </div>
 
-      <div
-        className="prose prose-lg mb-12 max-w-none"
-        dangerouslySetInnerHTML={{ __html: post.content ?? '' }}
-      />
+      {post.content && <BlogContent content={post.content} />}
     </article>
   );
 }

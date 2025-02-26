@@ -1,7 +1,7 @@
 const config = {
   siteName: 'Next.js WordPress',
   siteDescription: 'Headless WordPress!',
-  siteUrl: 'http://localhost:3000',
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
 };
 
 export default config;
