@@ -1,8 +1,8 @@
-import type { Metadata } from 'next';
+import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { BlogList } from '@/components/ui/blog';
-import { getPostsByTag } from '@/lib/queries/posts';
+import { getPostsByAuthor } from '@/lib/queries/posts';
 import type { DynamicRouteArgs } from '@/types';
 
 /**
@@ -14,31 +14,33 @@ export async function generateMetadata({
   params,
 }: DynamicRouteArgs): Promise<Metadata> {
   const { slug } = await params;
-  const tag = await getPostsByTag({ slug });
+  const author = await getPostsByAuthor({ slug });
 
-  if (!tag) throw notFound();
+  if (!author) throw notFound();
 
   return {
-    title: tag.name,
-    description: `เก็บแท็กสำหรับ ${tag.name}`,
+    title: author.name,
+    description: `บทความทั้งหมดของ ${author.name}`,
   };
 }
 
 /**
- * The tag archive route.
+ * The archive page route.
  *
  * @see https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts#pages
  */
-export default async function TagPage({ params }: Readonly<DynamicRouteArgs>) {
+export default async function AuthorPage({
+  params,
+}: Readonly<DynamicRouteArgs>) {
   const { slug } = await params;
-  const tag = await getPostsByTag({ slug });
+  const author = await getPostsByAuthor({ slug });
 
-  if (!tag || !tag.posts?.nodes) notFound();
+  if (!author || !author.posts?.nodes) notFound();
 
   return (
     <>
-      <h1 className="mb-4 text-3xl font-bold">แท็ก: {tag.name}</h1>
-      <BlogList posts={tag.posts.nodes} />
+      <h1 className="mb-4 text-3xl font-bold">บทความของ: {author.name}</h1>
+      <BlogList posts={author.posts.nodes} />
     </>
   );
 }

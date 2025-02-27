@@ -23,6 +23,7 @@ query GetPostPreview($id: ID!) {
     author {
       node {
         name
+        slug
         avatar {
           url
         }
@@ -30,12 +31,14 @@ query GetPostPreview($id: ID!) {
     }
     categories {
       nodes {
+        databaseId
         name
         slug
       }
     }
     tags {
       nodes {
+        databaseId
         name
         slug
       }

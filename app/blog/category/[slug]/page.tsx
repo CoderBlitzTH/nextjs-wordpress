@@ -2,11 +2,8 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { BlogList } from '@/components/ui/blog';
-import type { GetPostsByCategoryQuery } from '@/graphql/generated/graphql';
-import { GetPostsByCategoryDocument } from '@/graphql/generated/graphql';
-import { query } from '@/lib/apolloClient';
-import config from '@/lib/config';
-import type { PageProps } from '@/types';
+import { getPostsByCategory } from '@/lib/queries/posts';
+import type { DynamicRouteArgs } from '@/types';
 
 /**
  * Generate the metadata for each static route at build time.
@@ -15,21 +12,14 @@ import type { PageProps } from '@/types';
  */
 export async function generateMetadata({
   params,
-}: PageProps): Promise<Metadata> {
+}: DynamicRouteArgs): Promise<Metadata> {
   const { slug } = await params;
-  const { data } = await query<GetPostsByCategoryQuery>({
-    query: GetPostsByCategoryDocument,
-    variables: { first: 10, slug },
-  });
+  const category = await getPostsByCategory({ slug });
 
-  const { category } = data;
-
-  if (!category || !category?.posts?.nodes) {
-    return {};
-  }
+  if (!category) throw notFound();
 
   return {
-    title: `${category.name} - ${config.siteName}`,
+    title: category.name,
     description: `คลังเก็บหมวดหมู่สำหรับ ${category.name}`,
   };
 }
@@ -39,22 +29,17 @@ export async function generateMetadata({
  *
  * @see https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts#pages
  */
-export default async function Page({ params }: Readonly<PageProps>) {
+export default async function CategoryPage({
+  params,
+}: Readonly<DynamicRouteArgs>) {
   const { slug } = await params;
-  const { data } = await query({
-    query: GetPostsByCategoryDocument,
-    variables: { first: 10, slug },
-  });
+  const category = await getPostsByCategory({ slug });
 
-  const { category } = data;
-
-  if (!category || !category?.posts?.nodes) {
-    notFound();
-  }
+  if (!category || !category.posts?.nodes) notFound();
 
   return (
     <>
-      <h1 className="mb-4 text-3xl font-bold">{category.name}</h1>
+      <h1 className="mb-4 text-3xl font-bold">หมวดหมู่: {category.name}</h1>
       <BlogList posts={category.posts.nodes} />
     </>
   );

@@ -1,6 +1,7 @@
-query getPostsByCategory($slug: ID!, $first: Int!) {
-  category(id: $slug, idType: SLUG) {
+query getPostsByAuthor($slug: ID!, $first: Int!) {
+  user(id: $slug, idType: SLUG) {
     name
+    slug
     posts(first: $first, where: { status: PUBLISH }) {
       nodes {
         databaseId

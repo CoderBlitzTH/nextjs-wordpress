@@ -2,9 +2,9 @@ import { notFound } from 'next/navigation';
 
 import { BlogList } from '@/components/ui/blog';
 import type { GetPageQuery, GetPostsQuery } from '@/graphql/generated/graphql';
-import { GetPageDocument, GetPostsDocument } from '@/graphql/generated/graphql';
-import { query } from '@/lib/apolloClient';
-import type { PageProps } from '@/types/page';
+import { getPage } from '@/lib/queries/pages';
+import { getPosts } from '@/lib/queries/posts';
+import type { DynamicRouteArgs } from '@/types';
 
 /**
  * Represents the possible return types from the fetchData function using discriminated union
@@ -13,9 +13,8 @@ type FetchDataResult =
   | {
       type: 'posts';
       posts: NonNullable<NonNullable<GetPostsQuery['posts']>['nodes']>;
-      context: string;
     }
-  | { type: 'page'; post: NonNullable<GetPageQuery['page']> }
+  | { type: 'page'; page: NonNullable<GetPageQuery['page']> }
   | { type: 'error'; error: string };
 
 /**
@@ -27,32 +26,18 @@ type FetchDataResult =
  */
 const fetchData = async (slug: string): Promise<FetchDataResult> => {
   if (slug === 'blog') {
-    const { data } = await query({
-      query: GetPostsDocument,
-      variables: { first: 10 },
-    });
+    const posts = await getPosts();
 
-    if (!data?.posts?.nodes) {
+    if (!posts) {
       return { type: 'error', error: 'No posts found' };
     }
 
-    return {
-      type: 'posts',
-      posts: data.posts.nodes,
-      context: 'blog',
-    };
+    return { type: 'posts', posts };
   }
 
-  const { data } = await query({
-    query: GetPageDocument,
-    variables: { slug },
-  });
-
-  if (data?.page) {
-    return {
-      type: 'page',
-      post: data.page,
-    };
+  const page = await getPage({ slug });
+  if (page) {
+    return { type: 'page', page };
   }
 
   return { type: 'error', error: 'No data found' };
@@ -68,8 +53,8 @@ type RenderPageProps = {
 function RenderPage({ page }: RenderPageProps) {
   return (
     <article>
-      <h1 dangerouslySetInnerHTML={{ __html: page?.title ?? '' }} />
-      <div dangerouslySetInnerHTML={{ __html: page?.content ?? '' }} />
+      <h1 dangerouslySetInnerHTML={{ __html: page?.title || '' }} />
+      <div dangerouslySetInnerHTML={{ __html: page?.content || '' }} />
     </article>
   );
 }
@@ -78,7 +63,7 @@ function RenderPage({ page }: RenderPageProps) {
  * Catch-all Archive Page component that handles both single pages and post listings.
  * Uses type narrowing with discriminated unions for proper type checking.
  */
-export default async function Page({ params }: Readonly<PageProps>) {
+export default async function Page({ params }: Readonly<DynamicRouteArgs>) {
   const { slug } = await params;
   const data = await fetchData(slug);
 
@@ -87,7 +72,7 @@ export default async function Page({ params }: Readonly<PageProps>) {
   }
 
   if (data.type === 'page') {
-    return <RenderPage page={data.post} />;
+    return <RenderPage page={data.page} />;
   }
 
   if (data.type === 'posts' && data.posts.length > 0) {

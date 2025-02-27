@@ -25,6 +25,7 @@ query GetPosts($first: Int!) {
       }
       categories(where: { orderby: COUNT }) {
         nodes {
+          databaseId
           name
           slug
         }

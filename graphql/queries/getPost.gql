@@ -26,6 +26,7 @@ query GetPost($slug: ID!) {
     author {
       node {
         name
+        slug
         avatar {
           url
         }
@@ -33,20 +34,22 @@ query GetPost($slug: ID!) {
     }
     categories(where: { orderby: COUNT }) {
       nodes {
+        databaseId
         name
         slug
       }
     }
     tags {
       nodes {
+        databaseId
         name
         slug
       }
     }
     comments(first: 30, where: { statusIn: APPROVE, order: ASC }) {
       nodes {
-        date
         databaseId
+        date
         status
         content(format: RENDERED)
         author {

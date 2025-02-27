@@ -1,8 +1,9 @@
 import Image from 'next/image';
 
 import type { GetPostQuery } from '@/graphql/generated/graphql';
-import { getImageSizes } from '@/lib/utils';
+import { formatDate, getImageSizes } from '@/lib/utils';
 import type { ImgSize } from '@/types';
+import Link from 'next/link';
 import BlogContent from './BlogContent';
 
 type BlogPostProps = {
@@ -21,27 +22,46 @@ export default function BlogPost({ post }: BlogPostProps) {
           {post.title}
         </h1>
 
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
           <div className="flex items-center space-x-4">
-            <Image
-              src={post?.author?.node.avatar?.url ?? ''}
-              width={40}
-              height={40}
-              quality={80}
-              loading="lazy"
-              alt={post.author?.node.name ?? ''}
-              className="h-10 w-10 rounded-full"
-            />
+            <Link href={`/blog/author/${post.author?.node.slug || '#'}`}>
+              <Image
+                src={post?.author?.node.avatar?.url || ''}
+                width={40}
+                height={40}
+                quality={80}
+                loading="lazy"
+                alt={post.author?.node.name || ''}
+                className="h-10 w-10 rounded-full"
+              />
+            </Link>
 
             <div>
               <p className="font-medium text-gray-900 dark:text-white">
-                {post.author?.node.name}
+                <Link href={`/blog/author/${post.author?.node.slug || '#'}`}>
+                  {post.author?.node.name}
+                </Link>
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Feb 23, 2025 · 10 min read
+                {formatDate(post.date || '', 'D MMM YY')} · 10 min read
               </p>
             </div>
           </div>
+
+          {/* Category section */}
+          {post.categories?.nodes && post.categories.nodes.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2">
+              {post.categories.nodes.map(category => (
+                <Link
+                  key={category.databaseId}
+                  href={`/blog/category/${category.slug}`}
+                  className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-100 dark:hover:bg-blue-800"
+                >
+                  {category.name}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
 
         {post.featuredImage?.node?.sourceUrl && (
@@ -53,13 +73,28 @@ export default function BlogPost({ post }: BlogPostProps) {
             blurDataURL={images.thumbnail?.sourceUrl}
             placeholder="blur"
             loading="lazy"
-            alt={post.title ?? ''}
+            alt={post.title || ''}
             className="mb-4 h-96 w-full rounded-lg object-cover"
           />
         )}
       </div>
 
       {post.content && <BlogContent content={post.content} />}
+
+      {/* Tags section */}
+      {post.tags?.nodes && post.tags.nodes.length > 0 && (
+        <div className="mb-8 flex flex-wrap gap-2">
+          {post.tags.nodes.map(tag => (
+            <Link
+              key={tag.databaseId}
+              href={`/blog/tag/${tag.slug}`}
+              className="rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-800 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+            >
+              #{tag.name}
+            </Link>
+          ))}
+        </div>
+      )}
     </article>
   );
 }

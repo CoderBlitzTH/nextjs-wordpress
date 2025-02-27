@@ -27,6 +27,7 @@ query getPostsByTag($slug: ID!, $first: Int!) {
         }
         categories(where: { orderby: COUNT }) {
           nodes {
+            databaseId
             name
             slug
           }

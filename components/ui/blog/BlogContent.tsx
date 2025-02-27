@@ -113,9 +113,6 @@ function getParserOptions(): HTMLReactParserOptions {
             />
           );
         }
-
-        default:
-          return domNode;
       }
     },
   };
@@ -134,7 +131,7 @@ export default function BlogContent({ content }: BlogContentProps) {
   const parserOptions = getParserOptions(); // สร้างตัวเลือกสำหรับ parser
 
   return (
-    <div className="prose dark:prose-invert prose-img:rounded mb-12 max-w-none">
+    <div className="prose dark:prose-invert prose-img:rounded mb-8 max-w-none">
       {parse(cleanContent, parserOptions)}
     </div>
   );
