@@ -1,0 +1,99 @@
+fragment MediaItemFields on MediaItem {
+  sourceUrl(size: MEDIUM_LARGE)
+  mediaDetails {
+    sizes {
+      name
+      width
+      height
+      sourceUrl
+    }
+  }
+}
+
+fragment UserFields on User {
+  name
+  slug
+  avatar {
+    url
+  }
+}
+
+fragment CategoryFields on Category {
+  id
+  name
+  slug
+  count
+}
+
+fragment TagFields on Tag {
+  id
+  name
+  slug
+  count
+}
+
+fragment CommentDetails on Comment {
+  id
+  date
+  content(format: RENDERED)
+  author {
+    node {
+      name
+      avatar {
+        url
+      }
+    }
+  }
+}
+
+fragment PostDetails on Post {
+  id
+  date
+  slug
+  link
+  title(format: RENDERED)
+  excerpt(format: RENDERED)
+  content(format: RENDERED)
+  commentStatus
+  commentCount
+  featuredImage {
+    node {
+      ...MediaItemFields
+    }
+  }
+  author {
+    node {
+      ...UserFields
+    }
+  }
+  categories(where: { orderby: COUNT, order: DESC }) {
+    nodes {
+      ...CategoryFields
+    }
+  }
+  tags(where: { orderby: COUNT, order: DESC }) {
+    nodes {
+      ...TagFields
+    }
+  }
+}
+
+fragment PostsDetails on Post {
+  id
+  date
+  slug
+  link
+  title(format: RENDERED)
+  excerpt(format: RENDERED)
+  commentCount
+  featuredImage {
+    node {
+      ...MediaItemFields
+    }
+  }
+  categories(where: { orderby: COUNT, order: DESC }) {
+    nodes {
+      ...CategoryFields
+    }
+  }
+}

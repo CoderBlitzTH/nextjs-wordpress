@@ -12,9 +12,11 @@ import {
 } from '@apollo/experimental-nextjs-app-support';
 import { getCookie } from 'cookies-next';
 import crossFetch from 'cross-fetch';
+import { setVerbosity } from 'ts-invariant';
 
 // Enable detailed error messages in development
 if (process.env.NODE_ENV === 'development') {
+  setVerbosity('debug');
   loadDevMessages();
   loadErrorMessages();
 }

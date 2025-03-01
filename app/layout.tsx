@@ -30,9 +30,9 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <ApolloProvider>
-      <html lang="th" suppressHydrationWarning>
-        <body className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <html lang="th" suppressHydrationWarning>
+      <body className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <ApolloProvider>
           <ThemeProvider
             attribute="data-theme"
             defaultTheme="system"
@@ -46,8 +46,8 @@ export default function RootLayout({
             </main>
             <Footer />
           </ThemeProvider>
-        </body>
-      </html>
-    </ApolloProvider>
+        </ApolloProvider>
+      </body>
+    </html>
   );
 }

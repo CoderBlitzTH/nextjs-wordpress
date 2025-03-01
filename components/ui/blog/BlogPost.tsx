@@ -1,14 +1,13 @@
 import Image from 'next/image';
-
-import type { GetPostQuery } from '@/graphql/generated/graphql';
-import { formatDate, getImageSizes } from '@/lib/utils';
-import type { ImgSize } from '@/types';
 import Link from 'next/link';
-import BlogContent from './BlogContent';
 
-type BlogPostProps = {
-  post: NonNullable<GetPostQuery['post']>;
-};
+import { getImageSizes } from '@/lib/utils';
+import type { ImgSize } from '@/types';
+import ContentParser from '../content-parser';
+import DateFormatter from '../date-formatter';
+import NoImage from '../no-image';
+import BlogPostComments from './BlogPostComments';
+import type { BlogPostProps } from './types';
 
 export default function BlogPost({ post }: BlogPostProps) {
   const images = getImageSizes(
@@ -17,6 +16,7 @@ export default function BlogPost({ post }: BlogPostProps) {
 
   return (
     <article className="mx-auto max-w-4xl text-gray-700 dark:text-gray-300">
+      {/* Title section */}
       <div className="mb-8">
         <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-white">
           {post.title}
@@ -43,7 +43,16 @@ export default function BlogPost({ post }: BlogPostProps) {
                 </Link>
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                {formatDate(post.date || '', 'D MMM YY')} · 10 min read
+                <DateFormatter
+                  date={post?.date ?? ''}
+                  options={{
+                    year: '2-digit',
+                    month: 'short',
+                    day: 'numeric',
+                  }}
+                />
+                <span className="mx-1.5">·</span>
+                <span>10 min read</span>
               </p>
             </div>
           </div>
@@ -53,7 +62,7 @@ export default function BlogPost({ post }: BlogPostProps) {
             <div className="flex flex-wrap items-center gap-2">
               {post.categories.nodes.map(category => (
                 <Link
-                  key={category.databaseId}
+                  key={category.id}
                   href={`/blog/category/${category.slug}`}
                   className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-100 dark:hover:bg-blue-800"
                 >
@@ -64,7 +73,8 @@ export default function BlogPost({ post }: BlogPostProps) {
           )}
         </div>
 
-        {post.featuredImage?.node?.sourceUrl && (
+        {/* FeaturedImage section */}
+        {post.featuredImage?.node?.sourceUrl ? (
           <Image
             src={post.featuredImage?.node?.sourceUrl}
             width={736}
@@ -76,23 +86,40 @@ export default function BlogPost({ post }: BlogPostProps) {
             alt={post.title || ''}
             className="mb-4 h-96 w-full rounded-lg object-cover"
           />
+        ) : (
+          <NoImage />
         )}
       </div>
 
-      {post.content && <BlogContent content={post.content} />}
+      {/* Content section */}
+      {post.content && (
+        <div className="prose dark:prose-invert prose-img:rounded mb-8 max-w-none">
+          <ContentParser content={post.content} />
+        </div>
+      )}
 
       {/* Tags section */}
       {post.tags?.nodes && post.tags.nodes.length > 0 && (
         <div className="mb-8 flex flex-wrap gap-2">
           {post.tags.nodes.map(tag => (
             <Link
-              key={tag.databaseId}
+              key={tag.id}
               href={`/blog/tag/${tag.slug}`}
               className="rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-800 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
             >
               #{tag.name}
             </Link>
           ))}
+        </div>
+      )}
+
+      {/* Comments section */}
+      {post.commentStatus === 'open' && (
+        <div className="border-t border-gray-200 dark:border-gray-700">
+          <BlogPostComments
+            contentId={post.id}
+            totalComments={post.commentCount || 0}
+          />
         </div>
       )}
     </article>

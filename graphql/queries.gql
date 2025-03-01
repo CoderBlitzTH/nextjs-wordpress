@@ -1,0 +1,89 @@
+# import "./fragments.gql"
+
+query GetPosts($first: Int!) {
+  posts(first: $first, where: { status: PUBLISH }) {
+    nodes {
+      ...PostsDetails
+    }
+  }
+}
+
+query GetPostsByAuthor($slug: ID!, $first: Int!) {
+  user(id: $slug, idType: SLUG) {
+    name
+    posts(first: $first, where: { status: PUBLISH }) {
+      nodes {
+        ...PostsDetails
+      }
+    }
+  }
+}
+
+query GetPostsByCategory($slug: ID!, $first: Int!) {
+  category(id: $slug, idType: SLUG) {
+    name
+    posts(first: $first, where: { status: PUBLISH }) {
+      nodes {
+        ...PostsDetails
+      }
+    }
+  }
+}
+
+query GetPostsByTag($slug: ID!, $first: Int!) {
+  tag(id: $slug, idType: SLUG) {
+    name
+    posts(first: $first, where: { status: PUBLISH }) {
+      nodes {
+        ...PostsDetails
+      }
+    }
+  }
+}
+
+query GetComments($contentId: ID!, $first: Int!) {
+  comments(
+    first: $first
+    where: {
+      contentId: $contentId
+      contentStatus: PUBLISH
+      contentType: POST
+      statusIn: APPROVE
+    }
+  ) {
+    nodes {
+      ...CommentDetails
+      replies(first: 10) {
+        nodes {
+          ...CommentDetails
+        }
+      }
+    }
+  }
+}
+
+query GetPost($slug: ID!) {
+  post(id: $slug, idType: SLUG) {
+    ...PostDetails
+  }
+}
+query GetPostPreview($id: ID!) {
+  post(id: $id, idType: DATABASE_ID, asPreview: true) {
+    ...PostDetails
+  }
+}
+
+query GetPage($slug: ID = "URI") {
+  page(id: $slug, idType: URI) {
+    id
+    date
+    slug
+    title(format: RENDERED)
+    content(format: RENDERED)
+    featuredImage {
+      node {
+        ...MediaItemFields
+      }
+    }
+  }
+}

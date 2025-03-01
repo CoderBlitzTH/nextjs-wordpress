@@ -1,7 +1,7 @@
 import { registerApolloClient } from '@apollo/experimental-nextjs-app-support';
 import { createApolloClient } from './apolloConfig';
 
-export const { getClient, query, PreloadQuery } = registerApolloClient(() => {
+const { getClient } = registerApolloClient(() => {
   try {
     return createApolloClient();
   } catch (error) {
@@ -9,3 +9,7 @@ export const { getClient, query, PreloadQuery } = registerApolloClient(() => {
     throw error;
   }
 });
+
+const client = getClient();
+
+export default client;

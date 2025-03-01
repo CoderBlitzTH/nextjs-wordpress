@@ -1,11 +1,11 @@
 import { BlogList } from '@/components/ui/blog';
 import { GetPostsDocument } from '@/graphql/generated/graphql';
-import { query } from '@/lib/apolloClient';
+import client from '@/lib/apolloClient';
 
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const { data } = await query({
+  const { data } = await client.query({
     query: GetPostsDocument,
     variables: { first: 10 },
   });

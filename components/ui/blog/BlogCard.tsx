@@ -2,13 +2,11 @@ import { Calendar, MessageCircle } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import type { GetPostQuery } from '@/graphql/generated/graphql';
-import { formatDate, getImageSizes } from '@/lib/utils';
+import { getImageSizes } from '@/lib/utils';
 import type { ImgSize } from '@/types';
-
-type BlogCardProps = {
-  post: NonNullable<GetPostQuery['post']>;
-};
+import DateFormatter from '../date-formatter';
+import NoImage from '../no-image';
+import type { BlogCardProps } from './types';
 
 export default function BlogCard({ post }: BlogCardProps) {
   const images = getImageSizes(
@@ -18,8 +16,8 @@ export default function BlogCard({ post }: BlogCardProps) {
   return (
     <article className="mb-8 overflow-hidden rounded-lg bg-white shadow-md dark:bg-gray-800">
       <div className="relative h-96 w-full">
-        {post.featuredImage?.node?.sourceUrl && (
-          <Link href={post?.link ?? '#'}>
+        <Link href={post?.link ?? '#'}>
+          {post.featuredImage?.node?.sourceUrl ? (
             <Image
               src={post.featuredImage.node.sourceUrl}
               width={736}
@@ -31,8 +29,11 @@ export default function BlogCard({ post }: BlogCardProps) {
               alt={post.title || ''}
               className="h-full w-full object-cover"
             />
-          </Link>
-        )}
+          ) : (
+            <NoImage />
+          )}
+        </Link>
+
         <div className="absolute top-4 left-4">
           <Link
             href={`/blog/category/${post.categories?.nodes[0].slug}`}
@@ -48,10 +49,12 @@ export default function BlogCard({ post }: BlogCardProps) {
             {post.title}
           </h2>
         </Link>
+
         <div
           className="mb-4 text-gray-600 dark:text-gray-300"
           dangerouslySetInnerHTML={{ __html: post.excerpt ?? '' }}
         />
+
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-1">
@@ -60,7 +63,14 @@ export default function BlogCard({ post }: BlogCardProps) {
                 className="text-gray-500 dark:text-gray-400"
               />
               <span className="text-sm text-gray-500 dark:text-gray-400">
-                {formatDate(post?.date ?? '')}
+                <DateFormatter
+                  date={post?.date ?? ''}
+                  options={{
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  }}
+                />
               </span>
             </div>
 

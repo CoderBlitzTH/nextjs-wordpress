@@ -6,14 +6,14 @@ import {
   GetPostsDocument,
 } from '@/graphql/generated/graphql';
 import type { GraphQLQueryProps } from '@/types';
-import { query } from '../apolloClient';
+import client from '../apolloClient';
 import config from '../config';
 import { getRevalidateOptions } from '../revalidation';
 
 // ฟังก์ชั่นสำหรับดึงข้อมูลบทความ
 export async function getPosts(props?: Omit<GraphQLQueryProps, 'slug'>) {
   try {
-    const { data } = await query({
+    const { data } = await client.query({
       query: GetPostsDocument,
       variables: { first: props?.limit || config.limitPosts },
       fetchPolicy: props?.fetchPolicy,
@@ -34,7 +34,7 @@ export async function getPostsByCategory(props: GraphQLQueryProps) {
   if (!props.slug) return null;
 
   try {
-    const { data } = await query({
+    const { data } = await client.query({
       variables: { first: props?.limit || config.limitPosts, slug: props.slug },
       query: GetPostsByCategoryDocument,
       fetchPolicy: props?.fetchPolicy,
@@ -58,7 +58,7 @@ export async function getPostsByTag(props: GraphQLQueryProps) {
   if (!props.slug) return null;
 
   try {
-    const { data } = await query({
+    const { data } = await client.query({
       query: GetPostsByTagDocument,
       variables: { first: props?.limit || config.limitPosts, slug: props.slug },
       fetchPolicy: props?.fetchPolicy,
@@ -79,7 +79,7 @@ export async function getPostsByAuthor(props: GraphQLQueryProps) {
   if (!props.slug) return null;
 
   try {
-    const { data } = await query({
+    const { data } = await client.query({
       query: GetPostsByAuthorDocument,
       variables: { first: props?.limit || config.limitPosts, slug: props.slug },
       fetchPolicy: props?.fetchPolicy,
@@ -100,7 +100,7 @@ export async function getPost(props: Omit<GraphQLQueryProps, 'limit'>) {
   if (!props.slug) return null;
 
   try {
-    const { data } = await query({
+    const { data } = await client.query({
       query: GetPostDocument,
       variables: { slug: props.slug },
       fetchPolicy: props?.fetchPolicy,
