@@ -49,11 +49,12 @@ query GetComments($contentId: ID!, $first: Int!) {
       contentStatus: PUBLISH
       contentType: POST
       statusIn: APPROVE
+      parentIn: "null"
     }
   ) {
     nodes {
       ...CommentDetails
-      replies(first: 10) {
+      replies(first: 10, where: { statusIn: APPROVE }) {
         nodes {
           ...CommentDetails
         }

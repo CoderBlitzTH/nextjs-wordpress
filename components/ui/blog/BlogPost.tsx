@@ -3,11 +3,13 @@ import Link from 'next/link';
 
 import { getImageSizes } from '@/lib/utils';
 import type { ImgSize } from '@/types';
+import CommentList from '../comments/CommentList';
 import ContentParser from '../content-parser';
 import DateFormatter from '../date-formatter';
 import NoImage from '../no-image';
-import BlogPostComments from './BlogPostComments';
 import type { BlogPostProps } from './types';
+
+import defaultAvatar from '@/public/images/default-avatar.jpg';
 
 export default function BlogPost({ post }: BlogPostProps) {
   const images = getImageSizes(
@@ -26,7 +28,7 @@ export default function BlogPost({ post }: BlogPostProps) {
           <div className="flex items-center space-x-4">
             <Link href={`/blog/author/${post.author?.node.slug || '#'}`}>
               <Image
-                src={post?.author?.node.avatar?.url || ''}
+                src={post?.author?.node.avatar?.url || defaultAvatar.src}
                 width={40}
                 height={40}
                 quality={80}
@@ -58,7 +60,7 @@ export default function BlogPost({ post }: BlogPostProps) {
           </div>
 
           {/* Category section */}
-          {post.categories?.nodes && post.categories.nodes.length > 0 && (
+          {post.categories?.nodes && post.categories.nodes.length !== 0 && (
             <div className="flex flex-wrap items-center gap-2">
               {post.categories.nodes.map(category => (
                 <Link
@@ -99,7 +101,7 @@ export default function BlogPost({ post }: BlogPostProps) {
       )}
 
       {/* Tags section */}
-      {post.tags?.nodes && post.tags.nodes.length > 0 && (
+      {post.tags?.nodes && post.tags.nodes.length !== 0 && (
         <div className="mb-8 flex flex-wrap gap-2">
           {post.tags.nodes.map(tag => (
             <Link
@@ -114,10 +116,11 @@ export default function BlogPost({ post }: BlogPostProps) {
       )}
 
       {/* Comments section */}
-      {post.commentStatus === 'open' && (
+      {post?.commentStatus && post.commentStatus === 'open' && (
         <div className="border-t border-gray-200 dark:border-gray-700">
-          <BlogPostComments
-            contentId={post.id}
+          <CommentList
+            contentId={post.id || ''}
+            postId={post.databaseId || 0}
             totalComments={post.commentCount || 0}
           />
         </div>

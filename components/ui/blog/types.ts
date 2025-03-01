@@ -11,8 +11,3 @@ export type BlogListProps = {
 export type BlogPostProps = {
   post: NonNullable<GetPostQuery['post']>;
 };
-
-export type BlogPostCommentsProps = {
-  contentId: string;
-  totalComments: number;
-};

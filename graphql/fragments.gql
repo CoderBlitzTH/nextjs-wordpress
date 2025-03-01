@@ -47,6 +47,7 @@ fragment CommentDetails on Comment {
 }
 
 fragment PostDetails on Post {
+  databaseId
   id
   date
   slug

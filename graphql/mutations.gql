@@ -1,0 +1,29 @@
+# import "./fragments.gql"
+
+mutation CreateComment(
+  $author: String!
+  $authorEmail: String!
+  $content: String!
+  $postId: Int!
+  $clientMutationId: String = "createComment"
+) {
+  createComment(
+    input: {
+      author: $author
+      authorEmail: $authorEmail
+      content: $content
+      commentOn: $postId
+      clientMutationId: $clientMutationId
+    }
+  ) {
+    success
+    comment {
+      ...CommentDetails
+      replies(first: 10, where: { statusIn: APPROVE }) {
+        nodes {
+          ...CommentDetails
+        }
+      }
+    }
+  }
+}
