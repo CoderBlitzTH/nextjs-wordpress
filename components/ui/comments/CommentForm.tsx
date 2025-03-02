@@ -1,69 +1,29 @@
 'use client';
-
 import { useMutation } from '@apollo/client';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
   CreateCommentDocument,
   GetCommentsDocument,
+  type GetCommentsQuery,
 } from '@/graphql/generated/graphql';
-import type { CommentFormProps } from './types';
+import { EMAIL_REGEX, ERROR_MESSAGES } from '@/lib/constants';
+import { getButtonClassName, getInputClassName } from '@/lib/utils';
 
-// Constants
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const ERROR_MESSAGES = {
-  SUBMIT_FAIL: 'ไม่สามารถโพสต์ความคิดเห็นได้ โปรดลองอีกครั้ง',
-  NETWORK_ERROR: 'เกิดข้อผิดพลาดในการส่งความคิดเห็น กรุณาลองใหม่อีกครั้ง',
-  INVALID_EMAIL: 'กรุณากรอกอีเมลให้ถูกต้อง',
-} as const;
-
-const getInputClassName = (isEmailInvalid: boolean = false) => {
-  const baseClasses = [
-    'w-full',
-    'rounded-lg',
-    'border',
-    'p-4',
-    'focus:border-transparent',
-    'focus:ring-2',
-    'focus:ring-blue-500',
-    'focus-visible:outline-none',
-    'bg-white',
-    'text-gray-900',
-    'dark:bg-gray-800',
-    'dark:text-gray-100',
-    'disabled:opacity-50',
-  ];
-  const borderClasses = isEmailInvalid
-    ? ['border-red-500', 'dark:border-red-400']
-    : ['border-gray-200', 'dark:border-gray-700'];
-  return [...baseClasses, ...borderClasses].join(' ');
-};
-
-const getButtonClassName = (isDisabled: boolean) => {
-  const baseClasses = [
-    'self-end',
-    'rounded-lg',
-    'px-6',
-    'py-2',
-    'text-white',
-    'transition-colors',
-    'hover:cursor-pointer',
-  ];
-  const stateClasses = isDisabled
-    ? ['bg-gray-400', 'cursor-not-allowed', 'dark:bg-gray-600']
-    : [
-        'bg-blue-600',
-        'hover:bg-blue-700',
-        'dark:bg-blue-500',
-        'dark:hover:bg-blue-600',
-      ];
-  return [...baseClasses, ...stateClasses].join(' ');
+type CommentFormProps = {
+  contentId: string;
+  postId: number;
+  handleNewComment: (
+    comment: NonNullable<GetCommentsQuery['comments']>['nodes'][0]
+  ) => void;
+  setCommentCount: React.Dispatch<React.SetStateAction<number>>;
 };
 
 export default function CommentForm({
   postId,
   contentId,
-  onCommentCounter,
+  handleNewComment,
+  setCommentCount,
 }: CommentFormProps) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -79,18 +39,39 @@ export default function CommentForm({
   const [createComment, { loading: isSubmitting }] = useMutation(
     CreateCommentDocument,
     {
+      optimisticResponse: {
+        createComment: {
+          __typename: 'CreateCommentPayload',
+          success: true,
+          comment: {
+            __typename: 'Comment',
+            id: `temp-id-${Date.now()}`,
+            author: {
+              __typename: 'CommentToCommenterConnectionEdge',
+              node: {
+                __typename: 'CommentAuthor',
+                name: name,
+                avatar: {
+                  __typename: 'Avatar',
+                  url: null,
+                },
+              },
+            },
+            content: newComment,
+            date: new Date().toISOString(),
+          },
+        },
+      },
       update: (cache, { data }) => {
         if (!data?.createComment?.success) return;
 
-        const existingComments = cache.readQuery({
-          query: GetCommentsDocument,
-          variables: { contentId, first: 10 },
-        })?.comments?.nodes;
+        const existingComments =
+          cache.readQuery({
+            query: GetCommentsDocument,
+            variables: { contentId, first: 10 },
+          })?.comments?.nodes || [];
 
-        if (
-          existingComments &&
-          data.createComment.comment?.__typename === 'Comment'
-        ) {
+        if (data.createComment.comment?.__typename === 'Comment') {
           cache.writeQuery({
             query: GetCommentsDocument,
             variables: { contentId, first: 10 },
@@ -101,12 +82,16 @@ export default function CommentForm({
               },
             },
           });
+
+          if (data.createComment.comment.id.startsWith('temp-id-')) {
+            handleNewComment(data.createComment.comment);
+          }
         }
       },
       onCompleted: data => {
         if (data?.createComment?.success) {
           setNewComment('');
-          onCommentCounter();
+          setCommentCount(prev => prev + 1);
         } else {
           setErrorMessage(ERROR_MESSAGES.SUBMIT_FAIL);
         }
@@ -115,38 +100,30 @@ export default function CommentForm({
     }
   );
 
-  const isValidForm = useCallback(() => {
-    return (
-      name.trim() &&
-      email.trim() &&
-      newComment.trim() &&
-      EMAIL_REGEX.test(email)
-    );
-  }, [name, email, newComment]);
+  const isValidForm = () =>
+    name.trim() && email.trim() && newComment.trim() && EMAIL_REGEX.test(email);
 
-  const handleSubmitComment = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
-      setErrorMessage('');
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMessage('');
 
-      if (!isValidForm()) return;
+    if (!isValidForm()) return;
 
-      localStorage.setItem('commenterName', name);
-      localStorage.setItem('commenterEmail', email);
+    localStorage.setItem('commenterName', name);
+    localStorage.setItem('commenterEmail', email);
 
-      await createComment({
-        variables: {
-          author: name,
-          authorEmail: email,
-          content: newComment,
-          postId,
-        },
-      });
-    },
-    [name, email, newComment, createComment, postId, isValidForm]
-  );
+    await createComment({
+      variables: {
+        author: name,
+        authorEmail: email,
+        content: newComment,
+        postId,
+      },
+    });
+  };
+
   return (
-    <form onSubmit={handleSubmitComment} className="mb-8" autoComplete="off">
+    <form onSubmit={handleSubmit} className="mb-8" autoComplete="off">
       {errorMessage && (
         <div className="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-800 dark:bg-red-900/30 dark:text-red-200">
           {errorMessage}
@@ -192,7 +169,7 @@ export default function CommentForm({
           disabled={isSubmitting || !isValidForm()}
           className={getButtonClassName(isSubmitting || !isValidForm())}
         >
-          {isSubmitting ? 'กำลังโพสต์...' : 'แสดงความคิดเห็น'}
+          {isSubmitting ? 'กำลังส่ง...' : 'แสดงความคิดเห็น'}
         </button>
       </div>
     </form>

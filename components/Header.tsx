@@ -3,7 +3,10 @@ import ButtonThemeSwitch from './ui/button-theme-switch';
 
 export default function Header() {
   return (
-    <header className="fixed top-0 z-50 w-full bg-white shadow-md dark:bg-gray-800">
+    <header
+      id="Header"
+      className="fixed top-0 z-50 w-full bg-white shadow-md dark:bg-gray-800"
+    >
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <div className="text-xl font-bold text-gray-800 dark:text-white">

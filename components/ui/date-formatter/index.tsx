@@ -1,4 +1,8 @@
-import type { DateFormatterProps } from './types';
+type DateFormatterProps = {
+  date?: Date | string | number;
+  locale?: string;
+  options?: Intl.DateTimeFormatOptions;
+};
 
 export default function DateFormatter({
   date = new Date(),

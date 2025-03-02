@@ -19,11 +19,6 @@ mutation CreateComment(
     success
     comment {
       ...CommentDetails
-      replies(first: 10, where: { statusIn: APPROVE }) {
-        nodes {
-          ...CommentDetails
-        }
-      }
     }
   }
 }

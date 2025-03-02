@@ -2,11 +2,15 @@ import { Calendar, MessageCircle } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import type { GetPostQuery } from '@/graphql/generated/graphql';
 import { getImageSizes } from '@/lib/utils';
 import type { ImgSize } from '@/types';
 import DateFormatter from '../date-formatter';
 import NoImage from '../no-image';
-import type { BlogCardProps } from './types';
+
+type BlogCardProps = {
+  post: NonNullable<GetPostQuery['post']>;
+};
 
 export default function BlogCard({ post }: BlogCardProps) {
   const images = getImageSizes(

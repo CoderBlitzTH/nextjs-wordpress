@@ -1,4 +1,6 @@
-import type { NoImageProps } from './types';
+type NoImageProps = {
+  text?: string;
+};
 
 export default function NoImage({
   text = 'Image not available',

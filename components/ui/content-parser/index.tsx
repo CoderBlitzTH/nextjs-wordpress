@@ -4,9 +4,8 @@ import { ExternalLink } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { cleanHTML, isExternalLink } from '@/lib/utils';
 import NoImage from '../no-image';
-import type { ContentParserProps } from './types';
-import { cleanHTML, isExternalLink } from './utils';
 
 // สร้าง options สำหรับ html-react-parser เพื่อแปลง HTML เป็น React components
 function getParserOptions(): HTMLReactParserOptions {
@@ -78,6 +77,10 @@ function getParserOptions(): HTMLReactParserOptions {
     },
   };
 }
+
+type ContentParserProps = {
+  content: string;
+};
 
 /**
  * Component สำหรับแสดงเนื้อหา โดยแปลง HTML เป็น React components

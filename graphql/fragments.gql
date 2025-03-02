@@ -80,6 +80,7 @@ fragment PostDetails on Post {
 }
 
 fragment PostsDetails on Post {
+  databaseId
   id
   date
   slug

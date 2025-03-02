@@ -1,5 +1,9 @@
+import type { GetPostsQuery } from '@/graphql/generated/graphql';
 import BlogCard from './BlogCard';
-import type { BlogListProps } from './types';
+
+export type BlogListProps = {
+  posts: NonNullable<GetPostsQuery['posts']>['nodes'];
+};
 
 export default function BlogList({ posts }: BlogListProps) {
   return (

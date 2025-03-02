@@ -1,4 +1,8 @@
-import type { LoadingSpinnerProps } from './types';
+type LoadingSpinnerProps = {
+  size?: 'xs' | 'sm' | 'md' | 'lg';
+  textLoading?: string;
+  className?: string;
+};
 
 export default function LoadingSpinner({
   size = 'xs',

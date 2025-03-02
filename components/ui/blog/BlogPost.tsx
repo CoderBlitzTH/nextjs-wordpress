@@ -7,9 +7,13 @@ import CommentList from '../comments/CommentList';
 import ContentParser from '../content-parser';
 import DateFormatter from '../date-formatter';
 import NoImage from '../no-image';
-import type { BlogPostProps } from './types';
 
+import { GetPostQuery } from '@/graphql/generated/graphql';
 import defaultAvatar from '@/public/images/default-avatar.jpg';
+
+type BlogPostProps = {
+  post: NonNullable<GetPostQuery['post']>;
+};
 
 export default function BlogPost({ post }: BlogPostProps) {
   const images = getImageSizes(
