@@ -9,7 +9,7 @@ import Link from 'next/link';
  */
 export default function NotFound() {
   return (
-    <div className="text-center">
+    <div className="flex min-h-96 flex-col items-center justify-center text-center">
       <h1 className="mb-4 text-9xl font-bold text-gray-800 dark:text-white">
         404
       </h1>

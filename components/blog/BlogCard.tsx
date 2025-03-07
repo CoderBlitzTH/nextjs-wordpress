@@ -20,18 +20,18 @@ export default function BlogCard({ post }: BlogCardProps) {
   return (
     <article className="mb-8 overflow-hidden rounded-lg bg-white shadow-md dark:bg-gray-800">
       <div className="relative h-96 w-full">
-        <Link href={post?.link ?? '#'}>
+        <Link href={post?.link ?? '#'} className="relative block h-full w-full">
           {post.featuredImage?.node?.sourceUrl ? (
             <Image
               src={post.featuredImage.node.sourceUrl}
-              width={736}
-              height={384}
-              quality={80}
               blurDataURL={images.thumbnail?.sourceUrl}
               placeholder="blur"
               loading="lazy"
+              quality={80}
+              fill={true}
               alt={post.title || ''}
-              className="h-full w-full object-cover"
+              sizes="(max-width: 768px) 100vw, 768px"
+              className="object-cover"
             />
           ) : (
             <NoImage />

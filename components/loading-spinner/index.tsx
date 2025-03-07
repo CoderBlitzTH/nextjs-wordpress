@@ -35,11 +35,11 @@ export default function LoadingSpinner({
             fill="currentFill"
           />
         </svg>
-        <span className="sr-only">Loading...</span>
+        <span className="sr-only">กำลังโหลดข้อมูล...</span>
       </div>
       {textLoading && (
         <span className="text-gray-600 dark:text-gray-300">
-          {textLoading || 'Loading...'}
+          {textLoading || 'กำลังโหลดข้อมูล...'}
         </span>
       )}
     </div>

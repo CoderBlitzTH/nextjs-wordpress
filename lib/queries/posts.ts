@@ -4,11 +4,13 @@ import {
   GetPostsByCategoryDocument,
   GetPostsByTagDocument,
   GetPostsDocument,
+  PostIdType,
 } from '@/graphql/generated/graphql';
 import type { GraphQLQueryProps } from '@/types';
 import client from '../apolloClient';
 import config from '../config';
 import { getRevalidateOptions } from '../revalidation';
+import { getAuthToken } from './auth';
 
 // ฟังก์ชั่นสำหรับดึงข้อมูลบทความ
 export async function getPosts(props?: Omit<GraphQLQueryProps, 'slug'>) {
@@ -102,7 +104,10 @@ export async function getPost(props: Omit<GraphQLQueryProps, 'limit'>) {
   try {
     const { data } = await client.query({
       query: GetPostDocument,
-      variables: { slug: props.slug },
+      variables: {
+        slug: props.slug,
+        idType: PostIdType.Slug,
+      },
       fetchPolicy: props?.fetchPolicy,
       context: getRevalidateOptions(props?.next, `post:${props.slug}`),
     });
@@ -111,6 +116,39 @@ export async function getPost(props: Omit<GraphQLQueryProps, 'limit'>) {
   } catch (error) {
     console.error(
       `[getPost] Error fetching post: ${error instanceof Error ? error.message : error}`
+    );
+    return null;
+  }
+}
+
+// ฟังก์ชั่นสำหรับดึงข้อมูลบทความตาม slug
+export async function getPostPreview(props: Omit<GraphQLQueryProps, 'limit'>) {
+  if (!props.slug) return null;
+
+  try {
+    const authToken = await getAuthToken();
+    if (!authToken) {
+      console.error('[getPostPreview] No valid auth token available');
+      return null;
+    }
+
+    const { data } = await client.query({
+      query: GetPostDocument,
+      variables: {
+        slug: props.slug,
+        idType: PostIdType.DatabaseId,
+        isPreview: true,
+      },
+      fetchPolicy: 'network-only',
+      context: {
+        headers: { Authorization: `Bearer ${authToken}` },
+      },
+    });
+
+    return data?.post || null;
+  } catch (error) {
+    console.error(
+      `[getPostPreview] Error fetching post: ${error instanceof Error ? error.message : error}`
     );
     return null;
   }

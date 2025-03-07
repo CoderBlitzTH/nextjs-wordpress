@@ -1,9 +1,8 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { BlogList } from '@/components/ui/blog';
+import { BlogList } from '@/components/blog';
 import { getPostsByAuthor } from '@/lib/queries/posts';
-import type { DynamicRouteArgs } from '@/types';
 
 /**
  * Generate the metadata for each static route at build time.
@@ -12,11 +11,16 @@ import type { DynamicRouteArgs } from '@/types';
  */
 export async function generateMetadata({
   params,
-}: DynamicRouteArgs): Promise<Metadata> {
+}: Readonly<{ params: Promise<{ slug: string }> }>): Promise<Metadata> {
   const { slug } = await params;
   const author = await getPostsByAuthor({ slug });
 
-  if (!author) throw notFound();
+  if (!author) {
+    return {
+      title: 'ไม่พบนักเขียน',
+      description: undefined,
+    };
+  }
 
   return {
     title: author.name,
@@ -31,7 +35,7 @@ export async function generateMetadata({
  */
 export default async function AuthorPage({
   params,
-}: Readonly<DynamicRouteArgs>) {
+}: Readonly<{ params: Promise<{ slug: string }> }>) {
   const { slug } = await params;
   const author = await getPostsByAuthor({ slug });
 
@@ -40,7 +44,12 @@ export default async function AuthorPage({
   return (
     <>
       <h1 className="mb-4 text-3xl font-bold">บทความของ: {author.name}</h1>
-      <BlogList posts={author.posts.nodes} />
+
+      {author.posts.nodes.length > 0 ? (
+        <BlogList posts={author.posts.nodes} />
+      ) : (
+        <p className="text-xl text-gray-600 dark:text-gray-400">ไม่พบบทความ</p>
+      )}
     </>
   );
 }

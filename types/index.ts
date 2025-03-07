@@ -14,16 +14,6 @@ export type ImgData = {
   full?: ImgSize;
 } & Record<string, ImgSize | undefined>;
 
-export type DynamicRouteArgs = {
-  params: Promise<{
-    slug: string;
-  }>;
-};
-
-export type PrebuildParams = {
-  params: { slug: string };
-};
-
 // Query
 export type GraphQLQueryProps = {
   slug: string;

@@ -1,8 +1,7 @@
 import { Metadata } from 'next';
 
-import { BlogPost } from '@/components/ui/blog';
+import { BlogPost } from '@/components/blog';
 import { getPost, getPosts } from '@/lib/queries/posts';
-import type { DynamicRouteArgs } from '@/types';
 import { notFound } from 'next/navigation';
 
 /**
@@ -12,11 +11,16 @@ import { notFound } from 'next/navigation';
  */
 export async function generateMetadata({
   params,
-}: DynamicRouteArgs): Promise<Metadata> {
+}: Readonly<{ params: Promise<{ slug: string }> }>): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPost({ slug });
 
-  if (!post) throw notFound();
+  if (!post) {
+    return {
+      title: 'ไม่พบบทความ',
+      description: undefined,
+    };
+  }
 
   return {
     title: post.title,
@@ -32,7 +36,7 @@ export async function generateMetadata({
 export async function generateStaticParams() {
   const posts = await getPosts({ limit: 50 });
 
-  if (!posts) return [];
+  if (!posts || !posts.length) return [];
 
   return posts.filter(post => post?.slug).map(post => ({ slug: post.slug }));
 }
@@ -44,7 +48,7 @@ export async function generateStaticParams() {
  */
 export default async function BlogPostPage({
   params,
-}: Readonly<DynamicRouteArgs>) {
+}: Readonly<{ params: Promise<{ slug: string }> }>) {
   const { slug } = await params;
   const post = await getPost({ slug });
 

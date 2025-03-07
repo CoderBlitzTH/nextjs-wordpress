@@ -1,4 +1,4 @@
-export default function Footer() {
+export default async function Footer() {
   return (
     <footer className="bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300">
       <div className="container mx-auto px-4 py-8">

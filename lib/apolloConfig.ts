@@ -10,7 +10,6 @@ import {
   InMemoryCache,
   SSRMultipartLink,
 } from '@apollo/experimental-nextjs-app-support';
-import { getCookie } from 'cookies-next';
 import crossFetch from 'cross-fetch';
 import { setVerbosity } from 'ts-invariant';
 
@@ -21,6 +20,7 @@ if (process.env.NODE_ENV === 'development') {
   loadErrorMessages();
 }
 
+// Check if we're on the server
 const isServer = typeof window === 'undefined';
 
 /**
@@ -42,40 +42,38 @@ export function createApolloClient(): ApolloClient<NormalizedCacheObject> {
     networkError && console.error(`[Network error]: ${networkError}`);
   });
 
+  // HTTP Link for GraphQL requests
   const httpLink = createHttpLink({
     uri: process.env.NEXT_PUBLIC_WORDPRESS_GRAPHQL_URL,
     headers: { 'Content-Type': 'application/json' },
-    credentials: 'same-origin',
     fetch: crossFetch,
   });
 
-  // Authentication link
-  const authLink = new ApolloLink((operation, forward) => {
-    if (!isServer) {
-      const token = getCookie('authToken'); // ดึง token จาก Cookie (ใช้ได้เฉพาะ client)
-      if (token && typeof token === 'string' && token.length > 0) {
-        operation.setContext({ headers: { Authorization: `Bearer ${token}` } });
-      }
-    }
-    return forward(operation);
-  });
-
   // Combine the links
-  const link = isServer
+  const combineLink = isServer
     ? ApolloLink.from([
         new SSRMultipartLink({ stripDefer: true }),
         errorLink,
         httpLink,
       ])
-    : ApolloLink.from([authLink, errorLink, httpLink]);
+    : ApolloLink.from([errorLink, httpLink]);
 
   // Create the ApolloClient instance
   return new ApolloClient({
     cache: new InMemoryCache(),
-    link,
+    link: combineLink,
     defaultOptions: {
-      query: { fetchPolicy: isServer ? 'network-only' : 'cache-first' },
-      watchQuery: { fetchPolicy: isServer ? 'network-only' : 'cache-first' },
+      query: {
+        fetchPolicy: isServer ? 'network-only' : 'cache-first',
+        errorPolicy: 'all',
+      },
+      watchQuery: {
+        fetchPolicy: isServer ? 'network-only' : 'cache-first',
+        errorPolicy: 'all',
+      },
+      mutate: {
+        errorPolicy: 'all',
+      },
     },
   });
 }

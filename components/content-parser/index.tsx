@@ -1,10 +1,9 @@
 import type { DOMNode, HTMLReactParserOptions } from 'html-react-parser';
 import parse, { Element, domToReact } from 'html-react-parser';
-import { ExternalLink } from 'lucide-react';
 import Image from 'next/image';
-import Link from 'next/link';
 
-import { cleanHTML, isExternalLink } from '@/lib/utils';
+import { cleanHTML } from '@/lib/utils';
+import AutoLink from '../auto-link';
 import NoImage from '../no-image';
 
 // สร้าง options สำหรับ html-react-parser เพื่อแปลง HTML เป็น React components
@@ -32,34 +31,30 @@ function getParserOptions(): HTMLReactParserOptions {
               height={parseInt(height || '0', 10) || 384}
               quality={80}
               loading="lazy"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 1200px"
+              sizes="(max-width: 768px) 100vw, 768px"
             />
           );
         }
 
-        // แปลง <a> เป็น Next.js Link component พร้อมไอคอนสำหรับลิงก์ภายนอก
+        // แปลง <a> เป็น Next.js AutoLink component พร้อมไอคอนสำหรับลิงก์ภายนอก
         case 'a': {
           const { href } = domNode.attribs;
-          const isExternal = isExternalLink(href);
+
+          if (!href) return;
 
           return (
-            <Link
-              href={href}
-              target={isExternal ? '_blank' : undefined}
-              rel={isExternal ? 'noopener noreferrer' : undefined}
-              className={isExternal ? 'inline-flex items-center' : undefined}
-            >
+            <AutoLink href={href}>
               {domToReact(domNode.children as DOMNode[], getParserOptions())}
-              {isExternal && (
-                <ExternalLink size={14} className="mt-px ml-1 inline-block" />
-              )}
-            </Link>
+            </AutoLink>
           );
         }
 
         // แปลง <iframe> เป็น iframe ที่ปลอดภัย
         case 'iframe': {
           const { title, src, allow } = domNode.attribs;
+
+          if (!src) return;
+
           return (
             <iframe
               src={src}

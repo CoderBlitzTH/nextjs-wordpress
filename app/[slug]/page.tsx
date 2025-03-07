@@ -1,10 +1,9 @@
 import { notFound } from 'next/navigation';
 
-import { BlogList } from '@/components/ui/blog';
+import { BlogList } from '@/components/blog';
 import type { GetPageQuery, GetPostsQuery } from '@/graphql/generated/graphql';
 import { getPage } from '@/lib/queries/pages';
 import { getPosts } from '@/lib/queries/posts';
-import type { DynamicRouteArgs } from '@/types';
 
 /**
  * Represents the possible return types from the fetchData function using discriminated union
@@ -63,7 +62,9 @@ function RenderPage({ page }: RenderPageProps) {
  * Catch-all Archive Page component that handles both single pages and post listings.
  * Uses type narrowing with discriminated unions for proper type checking.
  */
-export default async function Page({ params }: Readonly<DynamicRouteArgs>) {
+export default async function Page({
+  params,
+}: Readonly<{ params: Promise<{ slug: string }> }>) {
   const { slug } = await params;
   const data = await fetchData(slug);
 

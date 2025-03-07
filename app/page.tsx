@@ -1,4 +1,4 @@
-import { BlogList } from '@/components/ui/blog';
+import { BlogList } from '@/components/blog';
 import { GetPostsDocument } from '@/graphql/generated/graphql';
 import client from '@/lib/apolloClient';
 

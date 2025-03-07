@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
         hostname: '*.gravatar.**',
       },
     ],
+    deviceSizes: [320, 640, 768],
   },
   logging: {
     fetches: {

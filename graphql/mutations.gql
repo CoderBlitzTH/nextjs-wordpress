@@ -22,3 +22,10 @@ mutation CreateComment(
     }
   }
 }
+
+mutation RefreshAuthToken($token: String!) {
+  refreshToken(input: { refreshToken: $token }) {
+    authToken
+    success
+  }
+}

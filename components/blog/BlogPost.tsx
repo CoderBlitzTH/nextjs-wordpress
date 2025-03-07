@@ -11,6 +11,20 @@ import NoImage from '../no-image';
 import { GetPostQuery } from '@/graphql/generated/graphql';
 import defaultAvatar from '@/public/images/default-avatar.jpg';
 
+function addHeadingIds(content: string): string {
+  return content.replace(
+    /<(h[1-3])(.*?)>(.*?)<\/h[1-3]>/g,
+    (match, tag, attributes, text, index) => {
+      const cleanText = text.trim();
+      const id = `heading-${cleanText
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w-]/g, '')}-${index}`;
+      return `<${tag}${attributes} id="${id}">${text}</${tag}>`;
+    }
+  );
+}
+
 type BlogPostProps = {
   post: NonNullable<GetPostQuery['post']>;
 };
@@ -81,17 +95,19 @@ export default function BlogPost({ post }: BlogPostProps) {
 
         {/* FeaturedImage section */}
         {post.featuredImage?.node?.sourceUrl ? (
-          <Image
-            src={post.featuredImage?.node?.sourceUrl}
-            width={736}
-            height={384}
-            quality={80}
-            blurDataURL={images.thumbnail?.sourceUrl}
-            placeholder="blur"
-            loading="lazy"
-            alt={post.title || ''}
-            className="mb-4 h-96 w-full rounded-lg object-cover"
-          />
+          <div className="relative mb-4 h-96 w-full">
+            <Image
+              src={post.featuredImage?.node?.sourceUrl}
+              quality={80}
+              blurDataURL={images.thumbnail?.sourceUrl}
+              placeholder="blur"
+              loading="lazy"
+              alt={post.title || ''}
+              fill={true}
+              sizes="(max-width: 768px) 100vw, 768px"
+              className="rounded-lg object-cover"
+            />
+          </div>
         ) : (
           <NoImage />
         )}

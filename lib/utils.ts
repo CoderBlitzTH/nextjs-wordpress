@@ -61,21 +61,32 @@ export const getButtonClassName = (isDisabled: boolean) => {
 };
 
 /**
- * ตรวจสอบว่า URL เป็น external link หรือไม่
+ * ตรวจสอบว่า URL เป็น Internal link หรือไม่
  *
  * @param url - URL ที่ต้องการตรวจสอบ
- * @returns true ถ้าเป็น external link, false ถ้าเป็น internal link หรือ URL ไม่ถูกต้อง
+ * @returns true ถ้าเป็น Internal link, false ถ้าเป็น External link หรือ URL ไม่ถูกต้อง
  */
-export function isExternalLink(url: string): boolean {
+export function isInternalLink(url: string): boolean {
   try {
-    // เปรียบเทียบ hostname ของ link กับ hostname ของ site
-    const linkUrl = new URL(url, config.siteUrl);
-    return linkUrl.hostname !== new URL(config.siteUrl!).hostname;
+    const parsedUrl = new URL(url, config.siteUrl);
+    const isInternal = parsedUrl.origin === config.siteUrl;
+
+    return isInternal;
   } catch (error) {
-    // ถ้าไม่สามารถแปลง URL ได้ ให้ถือว่าเป็น internal link
+    // ถ้าไม่สามารถแปลง URL ได้ ให้ถือว่าเป็น External link
     console.error(`Cannot parse URL: ${url}`, error);
     return false;
   }
+}
+
+/**
+ * ตรวจสอบว่า URL เป็น External link หรือไม่
+ *
+ * @param url - URL ที่ต้องการตรวจสอบ
+ * @returns true ถ้าเป็น External link, false ถ้าเป็น Internal link หรือ URL ไม่ถูกต้อง
+ */
+export function isExternalLink(url: string): boolean {
+  return !isInternalLink(url);
 }
 
 /**

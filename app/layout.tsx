@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 
-import Footer from '@/components/Footer';
-import Header from '@/components/Header';
-import ApolloProvider from '@/components/providers/ApolloProvider';
-import ThemeProvider from '@/components/providers/ThemeProvider';
+import Footer from '@/components/footer';
+import Header from '@/components/header';
 import config from '@/lib/config';
+import ApolloProvider from '@/providers/ApolloProvider';
+import ThemeProvider from '@/providers/ThemeProvider';
 import './globals.css';
 
 /**
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
  *
  * @see https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts#root-layout-required
  */
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (

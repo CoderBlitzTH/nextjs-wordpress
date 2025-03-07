@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { BlogList } from '@/components/ui/blog';
+import { BlogList } from '@/components/blog';
 import { getPostsByTag } from '@/lib/queries/posts';
-import type { DynamicRouteArgs } from '@/types';
 
 /**
  * Generate the metadata for each static route at build time.
@@ -12,11 +11,16 @@ import type { DynamicRouteArgs } from '@/types';
  */
 export async function generateMetadata({
   params,
-}: DynamicRouteArgs): Promise<Metadata> {
+}: Readonly<{ params: Promise<{ slug: string }> }>): Promise<Metadata> {
   const { slug } = await params;
   const tag = await getPostsByTag({ slug });
 
-  if (!tag) throw notFound();
+  if (!tag) {
+    return {
+      title: 'ไม่พบแท็ก',
+      description: undefined,
+    };
+  }
 
   return {
     title: tag.name,
@@ -29,7 +33,9 @@ export async function generateMetadata({
  *
  * @see https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts#pages
  */
-export default async function TagPage({ params }: Readonly<DynamicRouteArgs>) {
+export default async function TagPage({
+  params,
+}: Readonly<{ params: Promise<{ slug: string }> }>) {
   const { slug } = await params;
   const tag = await getPostsByTag({ slug });
 
@@ -38,7 +44,12 @@ export default async function TagPage({ params }: Readonly<DynamicRouteArgs>) {
   return (
     <>
       <h1 className="mb-4 text-3xl font-bold">แท็ก: {tag.name}</h1>
-      <BlogList posts={tag.posts.nodes} />
+
+      {tag.posts.nodes.length > 0 ? (
+        <BlogList posts={tag.posts.nodes} />
+      ) : (
+        <p className="text-xl text-gray-600 dark:text-gray-400">ไม่พบบทความ</p>
+      )}
     </>
   );
 }
