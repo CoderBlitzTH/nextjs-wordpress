@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 
-import Footer from '@/components/footer';
-import Header from '@/components/header';
+import { Footer, Header } from '@/components/layout';
 import config from '@/lib/config';
 import ApolloProvider from '@/providers/ApolloProvider';
 import ThemeProvider from '@/providers/ThemeProvider';

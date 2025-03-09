@@ -3,15 +3,15 @@
 import { ChevronRight, Menu, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import AutoLink from '../auto-link';
-import ButtonThemeSwitch from '../button-theme-switch';
+import { AutoLink } from '@/components/common';
+import ButtonThemeSwitchClient from './ThemeSwitchClient';
 import type { NavbarItem } from './types';
 
-type NavbarWithMobileProps = {
+type NavbarClientProps = {
   items: NavbarItem[];
 };
 
-export default function NavbarWithMobile({ items }: NavbarWithMobileProps) {
+export default function NavbarClient({ items }: NavbarClientProps) {
   const [mounted, setMounted] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -48,7 +48,7 @@ export default function NavbarWithMobile({ items }: NavbarWithMobileProps) {
   if (!mounted) {
     return (
       <div className="flex items-center">
-        <ButtonThemeSwitch />
+        <ButtonThemeSwitchClient />
         <button className="ml-4 md:hidden" aria-label="Toggle mobile menu">
           <Menu size={28} />
         </button>
@@ -60,7 +60,7 @@ export default function NavbarWithMobile({ items }: NavbarWithMobileProps) {
     <div className="relative">
       {/* Theme Switch and Mobile Menu Toggle */}
       <div className="flex items-center">
-        <ButtonThemeSwitch />
+        <ButtonThemeSwitchClient />
 
         {/* Hamburger Menu for Mobile */}
         <button

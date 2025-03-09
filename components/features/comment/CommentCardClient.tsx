@@ -2,17 +2,16 @@
 
 import Image from 'next/image';
 
+import { ContentParser, DateFormatter } from '@/components/common';
 import type { GetCommentsQuery } from '@/graphql/generated/graphql';
-import ContentParser from '../content-parser';
-import DateFormatter from '../date-formatter';
 
 import defaultAvatar from '@/public/images/default-avatar.jpg';
 
-type CommentCardProps = {
+type CommentCardClientProps = {
   comment: NonNullable<GetCommentsQuery['comments']>['nodes'][0];
 };
 
-export default function CommentCard({ comment }: CommentCardProps) {
+export default function CommentCardClient({ comment }: CommentCardClientProps) {
   return (
     <div
       data-comment-id={comment.id}

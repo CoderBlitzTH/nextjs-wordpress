@@ -10,7 +10,7 @@ import {
 import { EMAIL_REGEX, ERROR_MESSAGES } from '@/lib/constants';
 import { getButtonClassName, getInputClassName } from '@/lib/utils';
 
-type CommentFormProps = {
+type CommentFormClientProps = {
   contentId: string;
   postId: number;
   handleNewComment: (
@@ -19,12 +19,12 @@ type CommentFormProps = {
   setCommentCount: React.Dispatch<React.SetStateAction<number>>;
 };
 
-export default function CommentForm({
+export default function CommentFormClient({
   postId,
   contentId,
   handleNewComment,
   setCommentCount,
-}: CommentFormProps) {
+}: CommentFormClientProps) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [newComment, setNewComment] = useState('');

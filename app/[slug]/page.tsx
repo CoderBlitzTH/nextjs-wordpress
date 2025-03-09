@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 
-import { BlogList } from '@/components/blog';
+import { BlogList } from '@/components/features/blog';
 import type { GetPageQuery, GetPostsQuery } from '@/graphql/generated/graphql';
 import { getPage } from '@/lib/queries/pages';
 import { getPosts } from '@/lib/queries/posts';

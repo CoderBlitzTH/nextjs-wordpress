@@ -2,11 +2,10 @@ import { Calendar, MessageCircle } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { DateFormatter, NoImage } from '@/components/common';
 import type { GetPostQuery } from '@/graphql/generated/graphql';
 import { getImageSizes } from '@/lib/utils';
 import type { ImgSize } from '@/types';
-import DateFormatter from '../date-formatter';
-import NoImage from '../no-image';
 
 type BlogCardProps = {
   post: NonNullable<GetPostQuery['post']>;

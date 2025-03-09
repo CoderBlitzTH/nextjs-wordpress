@@ -76,5 +76,52 @@ query GetPage($slug: ID = "URI") {
         ...MediaItemFields
       }
     }
+    seo {
+      title
+      description
+      focusKeywords
+      robots
+      canonicalUrl
+      openGraph {
+        title
+        description
+        siteName
+        type
+        url
+        articleMeta {
+          section
+        }
+        twitterMeta {
+          card
+          description
+          title
+        }
+      }
+    }
+  }
+}
+
+query GetSitemapPostsAndPages($first: Int = 200) {
+  pages(first: $first) {
+    nodes {
+      slug
+      modified
+      seo {
+        canonicalUrl
+        focusKeywords
+        robots
+      }
+    }
+  }
+  posts(first: $first) {
+    nodes {
+      slug
+      modified
+      seo {
+        canonicalUrl
+        focusKeywords
+        robots
+      }
+    }
   }
 }

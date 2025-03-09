@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-import { BlogPost } from '@/components/blog';
+import { BlogPost } from '@/components/features/blog';
 import { getPost, getPosts } from '@/lib/queries/posts';
 import { notFound } from 'next/navigation';
 

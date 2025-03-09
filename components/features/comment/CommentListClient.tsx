@@ -3,25 +3,25 @@
 import { useQuery } from '@apollo/client';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { LoadingSpinner } from '@/components/common';
 import {
   GetCommentsDocument,
   type GetCommentsQuery,
 } from '@/graphql/generated/graphql';
-import LoadingSpinner from '../loading-spinner';
-import CommentCard from './CommentCard';
-import CommentForm from './CommentForm';
+import CommentCardClient from './CommentCardClient';
+import CommentFormClient from './CommentFormClient';
 
-type CommentListProps = {
+type CommentListClientProps = {
   totalComments: number;
   contentId: string;
   postId: number;
 };
 
-export default function CommentList({
+export default function CommentListClient({
   contentId,
   postId,
   totalComments,
-}: CommentListProps) {
+}: CommentListClientProps) {
   const [commentCount, setCommentCount] = useState(totalComments);
   const [newCommentId, setNewCommentId] = useState<string | null>(null);
   const commentListRef = useRef<HTMLDivElement>(null);
@@ -73,7 +73,7 @@ export default function CommentList({
       </h2>
 
       {/* Comment Form Section */}
-      <CommentForm
+      <CommentFormClient
         contentId={contentId}
         postId={postId}
         handleNewComment={handleNewComment}
@@ -91,7 +91,7 @@ export default function CommentList({
           <p className="text-red-500">เกิดข้อผิดพลาดในการโหลดความคิดเห็น</p>
         ) : comments.length !== 0 ? (
           comments.map(comment => (
-            <CommentCard key={comment.id} comment={comment} />
+            <CommentCardClient key={comment.id} comment={comment} />
           ))
         ) : (
           <p className="text-center text-gray-500 dark:text-gray-400">

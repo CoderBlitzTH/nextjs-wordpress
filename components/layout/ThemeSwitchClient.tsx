@@ -4,7 +4,7 @@ import { LoaderCircle, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
-export default function ButtonThemeSwitch() {
+export default function ThemeSwitchClient() {
   const { theme, setTheme, systemTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 

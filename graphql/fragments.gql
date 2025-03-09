@@ -77,6 +77,28 @@ fragment PostDetails on Post {
       ...TagFields
     }
   }
+  seo {
+    title
+    description
+    focusKeywords
+    robots
+    canonicalUrl
+    openGraph {
+      title
+      description
+      siteName
+      type
+      url
+      articleMeta {
+        section
+      }
+      twitterMeta {
+        card
+        description
+        title
+      }
+    }
+  }
 }
 
 fragment PostsDetails on Post {

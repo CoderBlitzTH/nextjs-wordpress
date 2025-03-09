@@ -1,29 +1,13 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { ContentParser, DateFormatter, NoImage } from '@/components/common';
 import { getImageSizes } from '@/lib/utils';
 import type { ImgSize } from '@/types';
-import CommentList from '../comments/CommentList';
-import ContentParser from '../content-parser';
-import DateFormatter from '../date-formatter';
-import NoImage from '../no-image';
+import { CommentListClient } from '../comment';
 
 import { GetPostQuery } from '@/graphql/generated/graphql';
 import defaultAvatar from '@/public/images/default-avatar.jpg';
-
-function addHeadingIds(content: string): string {
-  return content.replace(
-    /<(h[1-3])(.*?)>(.*?)<\/h[1-3]>/g,
-    (match, tag, attributes, text, index) => {
-      const cleanText = text.trim();
-      const id = `heading-${cleanText
-        .toLowerCase()
-        .replace(/\s+/g, '-')
-        .replace(/[^\w-]/g, '')}-${index}`;
-      return `<${tag}${attributes} id="${id}">${text}</${tag}>`;
-    }
-  );
-}
 
 type BlogPostProps = {
   post: NonNullable<GetPostQuery['post']>;
@@ -138,7 +122,7 @@ export default function BlogPost({ post }: BlogPostProps) {
       {/* Comments section */}
       {post?.commentStatus && post.commentStatus === 'open' && (
         <div className="border-t border-gray-200 dark:border-gray-700">
-          <CommentList
+          <CommentListClient
             contentId={post.id || ''}
             postId={post.databaseId || 0}
             totalComments={post.commentCount || 0}

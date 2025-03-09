@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
-import AutoLink from '../auto-link';
-import NavbarWithMobile from './NavbarWithMobile';
+import { AutoLink } from '@/components/common';
+import NavbarWithMobile from './NavbarClient';
 import type { NavbarItem } from './types';
 
 const navbarItems: NavbarItem[] = [

@@ -3,8 +3,8 @@ import parse, { Element, domToReact } from 'html-react-parser';
 import Image from 'next/image';
 
 import { cleanHTML } from '@/lib/utils';
-import AutoLink from '../auto-link';
-import NoImage from '../no-image';
+import AutoLink from './AutoLink';
+import NoImage from './NoImage';
 
 // สร้าง options สำหรับ html-react-parser เพื่อแปลง HTML เป็น React components
 function getParserOptions(): HTMLReactParserOptions {

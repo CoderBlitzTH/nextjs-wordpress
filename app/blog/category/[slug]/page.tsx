@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { BlogList } from '@/components/blog';
+import { BlogList } from '@/components/features/blog';
 import { getPostsByCategory } from '@/lib/queries/posts';
 
 /**
