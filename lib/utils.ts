@@ -15,51 +15,6 @@ export function getImageSizes(sizes: ImgSize[]): ImgData {
   }, {});
 }
 
-// สร้าง className สําหรับ input
-export const getInputClassName = (isInvalid: boolean = false) => {
-  const baseClasses = [
-    'w-full',
-    'rounded-lg',
-    'border',
-    'p-4',
-    'focus:border-transparent',
-    'focus:ring-2',
-    'focus:ring-blue-500',
-    'focus-visible:outline-none',
-    'bg-white',
-    'text-gray-900',
-    'dark:bg-gray-800',
-    'dark:text-gray-100',
-    'disabled:opacity-50',
-  ];
-  const borderClasses = isInvalid
-    ? ['border-red-500', 'dark:border-red-400']
-    : ['border-gray-200', 'dark:border-gray-700'];
-  return [...baseClasses, ...borderClasses].join(' ');
-};
-
-// สร้าง className สําหรับ button
-export const getButtonClassName = (isDisabled: boolean) => {
-  const baseClasses = [
-    'self-end',
-    'rounded-lg',
-    'px-6',
-    'py-2',
-    'text-white',
-    'transition-colors',
-    'hover:cursor-pointer',
-  ];
-  const stateClasses = isDisabled
-    ? ['bg-gray-400', 'cursor-not-allowed', 'dark:bg-gray-600']
-    : [
-        'bg-blue-600',
-        'hover:bg-blue-700',
-        'dark:bg-blue-500',
-        'dark:hover:bg-blue-600',
-      ];
-  return [...baseClasses, ...stateClasses].join(' ');
-};
-
 /**
  * ตรวจสอบว่า URL เป็น Internal link หรือไม่
  *

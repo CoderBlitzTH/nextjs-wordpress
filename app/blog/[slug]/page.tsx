@@ -1,11 +1,12 @@
 import { Metadata } from 'next';
-
-import { BlogPost } from '@/components/features/blog';
-import { getPost, getPosts } from '@/lib/queries/posts';
 import { notFound } from 'next/navigation';
 
+import { BlogPost } from '@/components/features/blog';
+import { generateSeoMetadata } from '@/lib/metadata';
+import { getPost, getPosts } from '@/lib/queries/posts';
+
 /**
- * Generate the metadata for each static route at build time.
+ * Generate the metadata for each blog post based on slug parameter.
  *
  * @see https://nextjs.org/docs/app/api-reference/functions/generate-metadata#generatemetadata-function
  */
@@ -15,17 +16,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const post = await getPost({ slug });
 
-  if (!post) {
-    return {
-      title: 'ไม่พบบทความ',
-      description: undefined,
-    };
-  }
-
-  return {
-    title: post.title,
-    description: post.excerpt,
-  };
+  return generateSeoMetadata(post?.seo);
 }
 
 /**

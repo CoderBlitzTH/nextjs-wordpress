@@ -13,10 +13,7 @@ import './globals.css';
  */
 export const metadata: Metadata = {
   metadataBase: new URL(config.siteUrl),
-  title: {
-    template: `%s - ${config.siteName}`,
-    default: 'MyBlog',
-  },
+  title: config.siteName,
   description: config.siteDescription,
 };
 

@@ -1,16 +1,20 @@
 import Link from 'next/link';
 
 import { AutoLink } from '@/components/common';
+import { getMenuPrimary } from '@/lib/queries/menu';
 import NavbarWithMobile from './NavbarClient';
-import type { NavbarItem } from './types';
+import type { NavbarItems } from './types';
 
-const navbarItems: NavbarItem[] = [
-  { href: '/', label: 'Home' },
-  { href: '/blog', label: 'Blog' },
-  { href: '#', label: 'About' },
-];
+export default async function Header() {
+  const menuPrimary = await getMenuPrimary();
 
-export default function Header() {
+  const navbarItems: NavbarItems[] =
+    menuPrimary?.map(item => ({
+      id: item.id,
+      url: item.url || '',
+      label: item.label || '',
+    })) || [];
+
   return (
     <header
       id="Header"
@@ -22,17 +26,19 @@ export default function Header() {
             <Link href="/">My Blog</Link>
           </div>
 
-          <nav className="hidden space-x-8 md:flex">
-            {navbarItems.map((item, index) => (
-              <AutoLink
-                key={index}
-                href={item.href}
-                className="text-gray-600 hover:text-gray-900 dark:text-gray-300 hover:dark:text-white"
-              >
-                {item.label}
-              </AutoLink>
-            ))}
-          </nav>
+          {navbarItems.length !== 0 && (
+            <nav className="hidden space-x-8 md:flex">
+              {navbarItems.map(item => (
+                <AutoLink
+                  key={item.id}
+                  href={item.url || ''}
+                  className="text-gray-600 hover:text-gray-900 dark:text-gray-300 hover:dark:text-white"
+                >
+                  {item.label}
+                </AutoLink>
+              ))}
+            </nav>
+          )}
 
           <NavbarWithMobile items={navbarItems} />
         </div>

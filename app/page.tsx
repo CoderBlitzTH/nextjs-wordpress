@@ -1,11 +1,11 @@
-import { BlogList } from '@/components/features/blog';
-import { GetPostsDocument } from '@/graphql/generated/graphql';
-import client from '@/lib/apolloClient';
-import config from '@/lib/config';
-import { getPage } from '@/lib/queries/pages';
 import { Metadata } from 'next';
 
-export const revalidate = 3600;
+import { ContentParser } from '@/components/common';
+import { BlogList } from '@/components/features/blog';
+import config from '@/lib/config';
+import { generateSeoMetadata } from '@/lib/metadata';
+import { getPage } from '@/lib/queries/pages';
+import { getPosts } from '@/lib/queries/posts';
 
 /**
  * Generate the metadata for each static route at build time.
@@ -15,33 +15,25 @@ export const revalidate = 3600;
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPage({ slug: config.slugHomePage });
 
-  if (!page) {
-    return {};
-  }
-
-  return {
-    title: page?.seo?.title,
-    description: page?.seo?.description,
-    keywords: page?.seo?.focusKeywords?.join(', '),
-    openGraph: {
-      title: page?.seo?.openGraph?.title || undefined,
-      description: page?.seo?.openGraph?.description || undefined,
-      url: page?.seo?.openGraph?.url || undefined,
-      siteName: page?.seo?.openGraph?.siteName || undefined,
-    },
-  };
+  return generateSeoMetadata(page?.seo);
 }
 
 export default async function HomePage() {
-  const { data } = await client.query({
-    query: GetPostsDocument,
-    variables: { first: 10 },
-  });
+  const page = await getPage({ slug: config.slugHomePage });
+  const posts = await getPosts();
 
   return (
     <>
-      <h1 className="mb-4 text-3xl font-bold">บทความล่าสุด</h1>
-      {data?.posts?.nodes && <BlogList posts={data?.posts?.nodes} />}
+      {page?.content && (
+        <div className="prose dark:prose-invert prose-img:rounded my-8 max-w-none">
+          <ContentParser content={page.content} />
+        </div>
+      )}
+
+      <div className="flex flex-col gap-4">
+        <h2 className="mb-4 text-3xl font-bold">บทความล่าสุด</h2>
+        {posts && posts.length > 0 && <BlogList posts={posts} />}
+      </div>
     </>
   );
 }

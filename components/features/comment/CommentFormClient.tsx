@@ -7,8 +7,61 @@ import {
   GetCommentsDocument,
   type GetCommentsQuery,
 } from '@/graphql/generated/graphql';
-import { EMAIL_REGEX, ERROR_MESSAGES } from '@/lib/constants';
-import { getButtonClassName, getInputClassName } from '@/lib/utils';
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const ERROR_MESSAGES = {
+  SUBMIT_FAIL: 'ไม่สามารถโพสต์ได้ โปรดลองอีกครั้ง',
+  NETWORK_ERROR: 'เกิดข้อผิดพลาดในการส่ง กรุณาลองใหม่อีกครั้ง',
+  INVALID_EMAIL: 'กรุณากรอกอีเมลให้ถูกต้อง',
+} as const;
+
+// สร้าง className สําหรับ input
+const getInputClassName = (isInvalid: boolean = false) => {
+  const baseClasses = [
+    'w-full',
+    'rounded-lg',
+    'border',
+    'p-4',
+    'focus:border-transparent',
+    'focus:ring-2',
+    'focus:ring-blue-500',
+    'focus-visible:outline-none',
+    'bg-white',
+    'text-gray-900',
+    'dark:bg-gray-800',
+    'dark:text-gray-100',
+    'disabled:opacity-50',
+  ];
+  const borderClasses = isInvalid
+    ? ['border-red-500', 'dark:border-red-400']
+    : ['border-gray-200', 'dark:border-gray-700'];
+  return [...baseClasses, ...borderClasses].join(' ');
+};
+
+// สร้าง className สําหรับ button
+const getButtonClassName = (isDisabled: boolean) => {
+  const baseClasses = [
+    'self-end',
+    'rounded-lg',
+    'px-6',
+    'py-2',
+    'text-white',
+    'transition-colors',
+    'hover:cursor-pointer',
+    'disabled:cursor-not-allowed',
+    'disabled:opacity-50',
+  ];
+  const stateClasses = isDisabled
+    ? ['bg-gray-400', 'dark:bg-gray-600']
+    : [
+        'bg-blue-600',
+        'hover:bg-blue-700',
+        'dark:bg-blue-500',
+        'dark:hover:bg-blue-600',
+      ];
+  return [...baseClasses, ...stateClasses].join(' ');
+};
 
 type CommentFormClientProps = {
   contentId: string;

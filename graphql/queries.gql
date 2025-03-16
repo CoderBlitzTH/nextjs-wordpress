@@ -8,6 +8,14 @@ query GetPosts($first: Int!) {
   }
 }
 
+query GetPostsBySearch($search: String = "", $first: Int!) {
+  posts(where: { search: $search }, first: $first) {
+    nodes {
+      ...PostsDetails
+    }
+  }
+}
+
 query GetPostsByAuthor($slug: ID!, $first: Int!) {
   user(id: $slug, idType: SLUG) {
     name
@@ -88,13 +96,19 @@ query GetPage($slug: ID = "URI") {
         siteName
         type
         url
-        articleMeta {
-          section
-        }
+        updatedTime
         twitterMeta {
           card
           description
           title
+          image
+        }
+        image {
+          width
+          height
+          type
+          secureUrl
+          url
         }
       }
     }
@@ -122,6 +136,16 @@ query GetSitemapPostsAndPages($first: Int = 200) {
         focusKeywords
         robots
       }
+    }
+  }
+}
+
+query GetMenuItems {
+  menuItems(where: { location: PRIMARY }) {
+    nodes {
+      id
+      label
+      url
     }
   }
 }

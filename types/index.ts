@@ -1,5 +1,3 @@
-import type { FetchPolicy } from '@apollo/client';
-
 export type ImgSize = {
   name: string;
   sourceUrl: string;
@@ -13,14 +11,3 @@ export type ImgData = {
   large?: ImgSize;
   full?: ImgSize;
 } & Record<string, ImgSize | undefined>;
-
-// Query
-export type GraphQLQueryProps = {
-  slug: string;
-  limit?: number;
-  fetchPolicy?: FetchPolicy;
-  next?: {
-    tags: string[];
-    revalidate: number;
-  };
-};

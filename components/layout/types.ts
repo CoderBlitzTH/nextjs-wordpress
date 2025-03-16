@@ -1,4 +1,5 @@
-export type NavbarItem = {
-  href: string;
-  label: string;
-};
+import type { GetMenuItemsQuery } from '@/graphql/generated/graphql';
+
+export type NavbarItems = NonNullable<
+  GetMenuItemsQuery['menuItems']
+>['nodes'][number];

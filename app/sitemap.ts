@@ -17,10 +17,10 @@ function createSitemapEntry(
   // Skip if node is undefined or null
   if (!node) return undefined;
 
-  //   // Skip if robots meta contains noindex
-  //   if (node.seo?.robots?.includes('noindex')) {
-  //     return undefined;
-  //   }
+  // Skip if robots meta contains noindex
+  if (node.seo?.robots?.includes('noindex')) {
+    return undefined;
+  }
 
   // Use canonical URL from SEO or fallback to site URL + slug with different paths for pages and posts
   let url;

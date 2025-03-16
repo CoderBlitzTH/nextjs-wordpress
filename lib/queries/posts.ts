@@ -2,15 +2,16 @@ import {
   GetPostDocument,
   GetPostsByAuthorDocument,
   GetPostsByCategoryDocument,
+  GetPostsBySearchDocument,
   GetPostsByTagDocument,
   GetPostsDocument,
   PostIdType,
 } from '@/graphql/generated/graphql';
-import type { GraphQLQueryProps } from '@/types';
 import client from '../apolloClient';
 import config from '../config';
 import { getRevalidateOptions } from '../revalidation';
 import { getAuthToken } from './auth';
+import type { GetPostsBySearchProps, GraphQLQueryProps } from './types';
 
 // ฟังก์ชั่นสำหรับดึงข้อมูลบทความ
 export async function getPosts(props?: Omit<GraphQLQueryProps, 'slug'>) {
@@ -26,6 +27,32 @@ export async function getPosts(props?: Omit<GraphQLQueryProps, 'slug'>) {
   } catch (error) {
     console.error(
       `[getPosts] Error fetching posts: ${error instanceof Error ? error.message : error}`
+    );
+    return null;
+  }
+}
+
+export async function getPostsBySearch(props: GetPostsBySearchProps) {
+  if (!props.search) return null;
+
+  try {
+    const { data } = await client.query({
+      query: GetPostsBySearchDocument,
+      variables: {
+        first: props?.limit || config.limitPosts,
+        search: props.search,
+      },
+      fetchPolicy: props?.fetchPolicy,
+      context: getRevalidateOptions(
+        props?.next,
+        `posts-search:${props.search}`
+      ),
+    });
+
+    return data?.posts?.nodes || null;
+  } catch (error) {
+    console.error(
+      `[getPostsBySearch] Error fetching posts: ${error instanceof Error ? error.message : error}`
     );
     return null;
   }

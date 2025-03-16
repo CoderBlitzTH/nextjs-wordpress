@@ -1,7 +1,9 @@
+import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { BlogList } from '@/components/features/blog';
 import type { GetPageQuery, GetPostsQuery } from '@/graphql/generated/graphql';
+import { generateSeoMetadata } from '@/lib/metadata';
 import { getPage } from '@/lib/queries/pages';
 import { getPosts } from '@/lib/queries/posts';
 
@@ -56,6 +58,20 @@ function RenderPage({ page }: RenderPageProps) {
       <div dangerouslySetInnerHTML={{ __html: page?.content || '' }} />
     </article>
   );
+}
+
+/**
+ * Generate the metadata for each page based on slug parameter.
+ *
+ * @see https://nextjs.org/docs/app/api-reference/functions/generate-metadata#generatemetadata-function
+ */
+export async function generateMetadata({
+  params,
+}: Readonly<{ params: Promise<{ slug: string }> }>): Promise<Metadata> {
+  const { slug } = await params;
+  const page = await getPage({ slug });
+
+  return generateSeoMetadata(page?.seo);
 }
 
 /**
