@@ -39,19 +39,16 @@ export default async function CategoryPage({
   const { slug } = await params;
   const category = await getPostsByCategory({ slug });
 
-  if (!category || !category.posts?.nodes) {
-    notFound();
-  }
+  if (!category || !category.posts?.nodes) notFound();
 
   return (
-    <>
-      <h1 className="mb-4 text-3xl font-bold">หมวดหมู่: {category.name}</h1>
-
-      {category.posts.nodes.length > 0 ? (
+    <section className="flex flex-col">
+      <h1 className="mb-8 text-center text-3xl font-bold">
+        หมวดหมู่: {category.name}
+      </h1>
+      {category.posts.nodes.length > 0 && (
         <BlogList posts={category.posts.nodes} />
-      ) : (
-        <p className="text-xl text-gray-600 dark:text-gray-400">ไม่พบบทความ</p>
       )}
-    </>
+    </section>
   );
 }

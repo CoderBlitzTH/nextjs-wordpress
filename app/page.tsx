@@ -25,15 +25,15 @@ export default async function HomePage() {
   return (
     <>
       {page?.content && (
-        <div className="prose dark:prose-invert prose-img:rounded my-8 max-w-none">
+        <div className="prose dark:prose-invert prose-img:rounded mb-8 max-w-none">
           <ContentParser content={page.content} />
         </div>
       )}
 
-      <div className="flex flex-col gap-4">
-        <h2 className="mb-4 text-3xl font-bold">บทความล่าสุด</h2>
+      <section className="flex flex-col">
+        <h2 className="mb-8 text-center text-3xl font-bold">บทความล่าสุด</h2>
         {posts && posts.length > 0 && <BlogList posts={posts} />}
-      </div>
+      </section>
     </>
   );
 }

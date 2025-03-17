@@ -42,14 +42,11 @@ export default async function AuthorPage({
   if (!author || !author.posts?.nodes) notFound();
 
   return (
-    <>
-      <h1 className="mb-4 text-3xl font-bold">บทความของ: {author.name}</h1>
-
-      {author.posts.nodes.length > 0 ? (
-        <BlogList posts={author.posts.nodes} />
-      ) : (
-        <p className="text-xl text-gray-600 dark:text-gray-400">ไม่พบบทความ</p>
-      )}
-    </>
+    <section className="flex flex-col">
+      <h1 className="mb-8 text-center text-3xl font-bold">
+        บทความของ: {author.name}
+      </h1>
+      {author.posts.nodes.length > 0 && <BlogList posts={author.posts.nodes} />}
+    </section>
   );
 }

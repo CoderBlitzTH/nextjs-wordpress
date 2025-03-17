@@ -10,8 +10,8 @@ import {
 import client from '../apolloClient';
 import config from '../config';
 import { getRevalidateOptions } from '../revalidation';
+import type { GetPostsBySearchProps, GraphQLQueryProps } from '../types';
 import { getAuthToken } from './auth';
-import type { GetPostsBySearchProps, GraphQLQueryProps } from './types';
 
 // ฟังก์ชั่นสำหรับดึงข้อมูลบทความ
 export async function getPosts(props?: Omit<GraphQLQueryProps, 'slug'>) {

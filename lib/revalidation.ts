@@ -1,5 +1,5 @@
-import { GraphQLQueryProps } from '@/types';
 import config from './config';
+import type { GraphQLQueryProps } from './types';
 
 // Construct query options with cache revalidation settings
 export function createRevalidateOptions(props?: GraphQLQueryProps['next']) {

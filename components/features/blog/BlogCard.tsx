@@ -4,8 +4,8 @@ import Link from 'next/link';
 
 import { DateFormatter, NoImage } from '@/components/common';
 import type { GetPostQuery } from '@/graphql/generated/graphql';
+import type { ImgSize } from '@/lib/types';
 import { getImageSizes } from '@/lib/utils';
-import type { ImgSize } from '@/types';
 
 type BlogCardProps = {
   post: NonNullable<GetPostQuery['post']>;

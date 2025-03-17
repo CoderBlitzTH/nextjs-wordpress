@@ -1,7 +1,7 @@
 import { GetPageDocument } from '@/graphql/generated/graphql';
 import client from '../apolloClient';
 import { getRevalidateOptions } from '../revalidation';
-import type { GraphQLQueryProps } from './types';
+import type { GraphQLQueryProps } from '../types';
 // ฟังก์ชั่นสำหรับดึงข้อมูลหน้าเพจ slug
 export async function getPage(props: Omit<GraphQLQueryProps, 'limit'>) {
   if (!props.slug) return null;

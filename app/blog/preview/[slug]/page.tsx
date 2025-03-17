@@ -1,11 +1,11 @@
+import { XCircle } from 'lucide-react';
 import { Metadata } from 'next';
 import { draftMode } from 'next/headers';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { BlogPost } from '@/components/features/blog';
 import { getPostPreview } from '@/lib/queries/posts';
-import { XCircle } from 'lucide-react';
-import Link from 'next/link';
 
 /**
  * Force the route to be dynamic.

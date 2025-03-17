@@ -2,11 +2,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { ContentParser, DateFormatter, NoImage } from '@/components/common';
-import { getImageSizes } from '@/lib/utils';
-import type { ImgSize } from '@/types';
+import type { GetPostQuery } from '@/graphql/generated/graphql';
+import type { ImgSize } from '@/lib/types';
+import { calculateReadingTime, getImageSizes } from '@/lib/utils';
 import { CommentListClient } from '../comment';
 
-import { GetPostQuery } from '@/graphql/generated/graphql';
 import defaultAvatar from '@/public/images/default-avatar.jpg';
 
 type BlogPostProps = {
@@ -56,7 +56,7 @@ export default function BlogPost({ post }: BlogPostProps) {
                   }}
                 />
                 <span className="mx-1.5">·</span>
-                <span>10 min read</span>
+                <span>{calculateReadingTime(post.content || '').text}</span>
               </p>
             </div>
           </div>

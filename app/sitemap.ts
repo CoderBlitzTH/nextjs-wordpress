@@ -1,7 +1,8 @@
+import { MetadataRoute } from 'next';
+
 import type { GetSitemapPostsAndPagesQuery } from '@/graphql/generated/graphql';
 import config from '@/lib/config';
 import { getSitemapPostsAndPages } from '@/lib/queries/sitemap';
-import { MetadataRoute } from 'next';
 
 // Enable ISR with 1-hour revalidation
 export const revalidate = 3600;

@@ -1,12 +1,12 @@
 import DOMPurify from 'isomorphic-dompurify';
 
-import type { ImgData, ImgSize } from '@/types';
 import config from './config';
+import type { ImgData, ImgSize, ReadingTimeResult } from './types';
 
 /**
- * Reduces an array of ImgSize to an ImgData object.
- * @param {ImgSize[]} sizes - The array of image sizes.
- * @returns {ImgData} The reduced image data.
+ * ลดขนาดอาร์เรย์ของ ImgSize ให้เป็นอ็อบเจ็กต์ ImgData
+ * @param {ImgSize[]} sizes - อาร์เรย์ของขนาดรูปภาพ
+ * @returns {ImgData} ข้อมูลรูปภาพที่ลดขนาด
  */
 export function getImageSizes(sizes: ImgSize[]): ImgData {
   return sizes.reduce((acc: ImgData, size: ImgSize) => {
@@ -55,4 +55,75 @@ export function cleanHTML(content: string): string {
     ADD_TAGS: ['iframe'], // อนุญาต iframe tags สำหรับ embed content
     ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling'], // อนุญาต attributes ที่จำเป็นสำหรับ iframe
   });
+}
+
+/**
+ * คำนวณเวลาในการอ่านบทความโดยประมาณเป็นนาที
+ * @param content เนื้อหาบทความ
+ * @param wordsPerMinute จำนวนคำที่อ่านได้ต่อนาที (ค่าเริ่มต้น: 225 สำหรับภาษาไทย, 180 สำหรับภาษาอังกฤษ)
+ * @param isThai บ่งชี้ว่าเป็นภาษาไทยหรือไม่ (ค่าเริ่มต้น: ตรวจสอบอัตโนมัติ)
+ * @returns ข้อมูลเวลาที่ใช้ในการอ่าน
+ */
+export function calculateReadingTime(
+  content: string,
+  wordsPerMinute?: number,
+  isThai?: boolean
+): ReadingTimeResult {
+  if (!content?.trim()) {
+    return { minutes: 0, text: '0 min read' };
+  }
+
+  const DEFAULT_THAI_WPM = 225;
+  const DEFAULT_ENGLISH_WPM = 180;
+  const THAI_CHARS_PER_WORD = 2.5;
+  const MIN_PROCESSING_TIME = 0.2;
+  const PARAGRAPH_TIME_FACTOR = 0.1;
+  const ROUNDING_THRESHOLD = 0.3;
+
+  const cleanContent = content.replace(/<\/?[^>]+(>|$)/g, '');
+  const thaiChars = cleanContent.match(/[\u0E00-\u0E7F]/g) || [];
+  const englishWords = cleanContent.match(/[a-zA-Z]+/g) || [];
+  const paragraphs =
+    cleanContent.split(/\n+/).filter(p => p.trim()).length || 1;
+
+  // ตรวจสอบภาษาไทยอัตโนมัติถ้าไม่ได้ระบุ
+  const isThaiContent = isThai ?? thaiChars.length > cleanContent.length * 0.5;
+
+  const wpm =
+    wordsPerMinute || (isThaiContent ? DEFAULT_THAI_WPM : DEFAULT_ENGLISH_WPM);
+  const thaiWPM = isThaiContent ? wpm : DEFAULT_THAI_WPM;
+  const englishWPM = isThaiContent
+    ? wordsPerMinute
+      ? wpm * 0.8
+      : DEFAULT_ENGLISH_WPM
+    : wpm;
+
+  // คำนวณจำนวนคำและเวลาอ่าน
+  const thaiWordCount = thaiChars.length / THAI_CHARS_PER_WORD;
+  const englishWordCount = englishWords.length;
+  const wordCount = isThaiContent
+    ? thaiWordCount
+    : cleanContent.split(/\s+/).filter(Boolean).length;
+
+  const readingTime = isThaiContent
+    ? thaiWordCount / thaiWPM + englishWordCount / englishWPM
+    : wordCount / englishWPM;
+
+  // คำนวณเวลาประมวลผลย่อหน้า
+  const processingTime = Math.max(
+    MIN_PROCESSING_TIME,
+    paragraphs * PARAGRAPH_TIME_FACTOR
+  );
+  const totalMinutes = readingTime + processingTime;
+
+  // ปัดตัวเลข
+  const roundedMinutes = Math.max(
+    1,
+    Math.ceil(totalMinutes - ROUNDING_THRESHOLD)
+  );
+
+  return {
+    minutes: roundedMinutes,
+    text: `${roundedMinutes} min read`,
+  };
 }

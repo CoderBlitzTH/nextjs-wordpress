@@ -37,7 +37,7 @@ export default async function RootLayout({
             scriptProps={{ 'data-cfasync': false }}
           >
             <Header />
-            <main className="mx-auto max-w-3xl px-4 pt-24 pb-16">
+            <main className="mx-auto max-w-3xl px-4 pt-32 pb-16">
               {children}
             </main>
             <Footer />

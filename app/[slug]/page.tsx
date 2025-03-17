@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+import { ContentParser } from '@/components/common';
 import { BlogList } from '@/components/features/blog';
 import type { GetPageQuery, GetPostsQuery } from '@/graphql/generated/graphql';
 import { generateSeoMetadata } from '@/lib/metadata';
@@ -53,9 +54,9 @@ type RenderPageProps = {
 
 function RenderPage({ page }: RenderPageProps) {
   return (
-    <article>
-      <h1 dangerouslySetInnerHTML={{ __html: page?.title || '' }} />
-      <div dangerouslySetInnerHTML={{ __html: page?.content || '' }} />
+    <article className="prose dark:prose-invert prose-img:rounded mb-8 max-w-none">
+      <h1 className="mb-4 text-center text-3xl font-bold">{page?.title}</h1>
+      {page?.content && <ContentParser content={page.content} />}
     </article>
   );
 }
@@ -94,10 +95,10 @@ export default async function Page({
 
   if (data.type === 'posts' && data.posts.length > 0) {
     return (
-      <>
-        <h1 className="mb-4 text-3xl font-bold">บทความล่าสุด</h1>
+      <section className="flex flex-col">
+        <h1 className="mb-8 text-center text-3xl font-bold">บทความจากบล็อก</h1>
         <BlogList posts={data.posts} />
-      </>
+      </section>
     );
   }
 

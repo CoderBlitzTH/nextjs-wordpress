@@ -1,5 +1,6 @@
-import config from '@/lib/config';
 import type { MetadataRoute } from 'next';
+
+import config from '@/lib/config';
 
 /**
  * Generate robots.txt.
