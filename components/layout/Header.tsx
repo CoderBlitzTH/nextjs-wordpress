@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import { AutoLink } from '@/components/common';
+import config from '@/lib/config';
 import { getMenuPrimary } from '@/lib/queries/menu';
 import NavbarWithMobile from './NavbarClient';
 import type { NavbarItems } from './types';
@@ -23,16 +24,16 @@ export default async function Header() {
       <div className="mx-auto max-w-5xl px-4">
         <div className="flex h-16 items-center justify-between">
           <div className="text-xl font-bold text-gray-800 dark:text-white">
-            <Link href="/">My Blog</Link>
+            <Link href="/">{config.siteName}</Link>
           </div>
 
           {navbarItems.length !== 0 && (
-            <nav className="hidden space-x-8 md:flex">
+            <nav className="mx-auto hidden space-x-8 md:flex">
               {navbarItems.map(item => (
                 <AutoLink
                   key={item.id}
                   href={item.url || ''}
-                  className="text-gray-600 hover:text-gray-900 dark:text-gray-300 hover:dark:text-white"
+                  className="leading-7 text-gray-600 hover:text-gray-900 dark:text-gray-300 hover:dark:text-white"
                 >
                   {item.label}
                 </AutoLink>

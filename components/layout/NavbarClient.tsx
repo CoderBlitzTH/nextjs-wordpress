@@ -49,7 +49,7 @@ export default function NavbarClient({ items }: NavbarClientProps) {
 
   if (!mounted) {
     return (
-      <div className="flex items-center">
+      <div className="ml-auto flex items-center">
         <ButtonThemeSwitchClient />
         <button className="ml-4 md:hidden" aria-label="Toggle mobile menu">
           <Menu size={28} />
@@ -59,7 +59,7 @@ export default function NavbarClient({ items }: NavbarClientProps) {
   }
 
   return (
-    <div className="relative">
+    <div className="relative ml-auto flex items-center">
       {/* Theme Switch and Mobile Menu Toggle */}
       <div className="flex items-center">
         <ButtonThemeSwitchClient />
